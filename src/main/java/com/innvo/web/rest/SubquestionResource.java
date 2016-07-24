@@ -165,4 +165,21 @@ public class SubquestionResource {
         return new ResponseEntity<>(page.getContent(), headers, HttpStatus.OK);
     }
 
+    /**
+     * GET  /subquestions/:id : get subquestion by Question.
+     *
+     * @param id the id of the subquestion to retrieve
+     * @return the ResponseEntity with status 200 (OK) and with body the subquestion, or with status 404 (Not Found)
+     * @throws URISyntaxException 
+     */
+    @RequestMapping(value = "/subquestionsByQuestion/{id}",
+        method = RequestMethod.GET,
+        produces = MediaType.APPLICATION_JSON_VALUE)
+    @Timed
+    public ResponseEntity<List<Subquestion>> getSubquestionByQuestion(@PathVariable Long id,Pageable pageable) throws URISyntaxException {
+        log.debug("REST request to get Subquestion By Question: {}", id);
+        Page<Subquestion> page = subquestionRepository.findByQuestionId(id,pageable); 
+        HttpHeaders headers = PaginationUtil.generatePaginationHttpHeaders(page, "/api/subquestions");
+        return new ResponseEntity<>(page.getContent(), headers, HttpStatus.OK);
+    }
 }

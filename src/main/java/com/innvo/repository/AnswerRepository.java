@@ -2,6 +2,8 @@ package com.innvo.repository;
 
 import com.innvo.domain.Answer;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.*;
 
 import java.util.List;
@@ -11,5 +13,7 @@ import java.util.List;
  */
 @SuppressWarnings("unused")
 public interface AnswerRepository extends JpaRepository<Answer,Long> {
+
+	Page<Answer> findByQuestionId(long id,Pageable pageable);
 
 }

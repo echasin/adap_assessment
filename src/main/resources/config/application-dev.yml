@@ -31,8 +31,8 @@ spring:
     datasource:
         url: jdbc:postgresql://localhost:5432/adap_ms
         name:
-        username: root
-        password: root
+        username: postgres
+        password: postgres
     jpa:
         database-platform: com.innvo.domain.util.FixedPostgreSQL82Dialect
         database: POSTGRESQL
