@@ -165,4 +165,21 @@ public class AnswerResource {
         return new ResponseEntity<>(page.getContent(), headers, HttpStatus.OK);
     }
 
+    /**
+     * GET  /answers by question/:id : get the "id" answer.
+     *
+     * @param id the id of the answer to retrieve
+     * @return the ResponseEntity with status 200 (OK) and with body the answer, or with status 404 (Not Found)
+     * @throws URISyntaxException 
+     */
+    @RequestMapping(value = "/answersByQuestion/{id}",
+        method = RequestMethod.GET,
+        produces = MediaType.APPLICATION_JSON_VALUE)
+    @Timed
+    public ResponseEntity<List<Answer>> getAnswerByQuestion(@PathVariable Long id,Pageable pageable) throws URISyntaxException {
+        log.debug("REST request to get Answer by Question : {}", id);
+        Page<Answer> page = answerRepository.findByQuestionId(id, pageable);
+        HttpHeaders headers = PaginationUtil.generatePaginationHttpHeaders(page, "/api/answers");
+        return new ResponseEntity<>(page.getContent(), headers, HttpStatus.OK);    
+    }
 }

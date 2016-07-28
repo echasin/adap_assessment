@@ -165,4 +165,25 @@ public class QuestionResource {
         return new ResponseEntity<>(page.getContent(), headers, HttpStatus.OK);
     }
 
+    
+
+    /**
+     * GET  /questions/:id : get questions by question group.
+     *
+     * @param id the id of the question to retrieve
+     * @return the ResponseEntity with status 200 (OK) and with body the question, or with status 404 (Not Found)
+     * @throws URISyntaxException 
+     */
+    @RequestMapping(value = "/questionsByQuestionGroup/{id}",
+        method = RequestMethod.GET,
+        produces = MediaType.APPLICATION_JSON_VALUE)
+    @Timed
+    public ResponseEntity<List<Question>> getQuestionByQuestionGroup(@PathVariable Long id,Pageable pageable
+    		 ) throws URISyntaxException {
+        log.debug("REST request to get Question By Question Group: {}", id);
+        Page<Question> page = questionRepository.findByQuestiongroupId(id,pageable);
+        HttpHeaders headers = PaginationUtil.generatePaginationHttpHeaders(page, "/api/questions");
+        return new ResponseEntity<>(page.getContent(), headers, HttpStatus.OK);
+  
+    }
 }

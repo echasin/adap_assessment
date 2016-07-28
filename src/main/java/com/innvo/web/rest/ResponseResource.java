@@ -1,7 +1,9 @@
 package com.innvo.web.rest;
 
 import com.codahale.metrics.annotation.Timed;
+import com.innvo.domain.Questionnaire;
 import com.innvo.domain.Response;
+import com.innvo.repository.QuestionnaireRepository;
 import com.innvo.repository.ResponseRepository;
 import com.innvo.repository.search.ResponseSearchRepository;
 import com.innvo.web.rest.util.HeaderUtil;
@@ -20,6 +22,9 @@ import javax.inject.Inject;
 import javax.validation.Valid;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -41,6 +46,11 @@ public class ResponseResource {
     
     @Inject
     private ResponseSearchRepository responseSearchRepository;
+    
+
+    
+    @Inject
+    private QuestionnaireRepository questionnaireRepository;
     
     /**
      * POST  /responses : Create a new response.
@@ -163,6 +173,33 @@ public class ResponseResource {
         Page<Response> page = responseSearchRepository.search(queryStringQuery(query), pageable);
         HttpHeaders headers = PaginationUtil.generateSearchPaginationHttpHeaders(query, page, "/api/_search/responses");
         return new ResponseEntity<>(page.getContent(), headers, HttpStatus.OK);
+    }
+
+    
+    /**
+     * GET  /save response
+     *
+     * @param id the id of the questionnaire
+     */
+    @RequestMapping(value = "/saveResponse/{id}/{details}",
+        method = RequestMethod.GET,
+        produces = MediaType.APPLICATION_JSON_VALUE)
+    @Timed
+    public void saveResponse(@PathVariable("id") Long id,
+    		                 @PathVariable("details") String details) {
+        log.debug("REST request to save Response : {}", id);
+        Response response = new Response();
+        Questionnaire questionnaire=questionnaireRepository.getOne(id);
+        response.setQuestionnaire(questionnaire);
+        response.setDetails(details);
+        response.setDomain("DEMO");
+        response.setLastmodifiedby("echasin");
+        response.setStatus("Active");
+        Date date=new Date();
+        ZonedDateTime lastmodifieddatetime = ZonedDateTime.ofInstant(date.toInstant(),
+                ZoneId.systemDefault());
+        response.setLastmodifieddatetime(lastmodifieddatetime);
+        responseRepository.save(response);
     }
 
 }
