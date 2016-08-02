@@ -1,3 +1,5 @@
-id, code, answeroption, position, status, lastmodifiedby, lastmodifieddatetime, domain, question_id
-1001,"A1","Answer One",1,"Active","echasin","2016-07-17 00:00:00","DEMO",1002
-1002,"A2","Answer Two",2,"Active","echasin","2016-07-17 00:00:00","DEMO",1002
+id,code,answeroption,position,status,lastmodifiedby,lastmodifieddatetime,domain,question_id
+1001,A1,Answer One,1,Active,echasin,2016-07-17 00:00:00,DEMO,1002
+1002,A2,Answer Two,2,Active,echasin,2016-07-17 00:00:00,DEMO,1002
+1003,A1,Answer One,1,Active,echasin,2016-07-17 00:00:00,DEMO,1004
+1004,A2,Answer Two,2,Active,echasin,2016-07-17 00:00:00,DEMO,1004

@@ -1,0 +1,107 @@
+{
+  "response.id": 1,
+  "questionnaire.id": 1001,
+  "questionnaire.name": "My Sample Question",
+  "questiongroups": [
+    {
+      "questiongroup.id": 1001,
+      "questiongroup.name": "questiongroup name one",
+      "questions": [
+        {
+          "question.id": 1001,
+          "question.manadatory": "TRUE",
+          "question.code": "Q1",
+          "question.position": 1,
+          "question.help": "Please used the following  scoring system  Score of 1 -  Dont Like Score of 3  - See Some Value Score of 5  -  Great Tool",
+          "question": "What is our evaluation of the Jhipster 3.x Application.",
+          "question.type": "5 Point Choice",
+          "response": "3"
+        },
+        {
+          "question.id": 1002,
+          "question.manadatory": "TRUE",
+          "question.code": "Q2",
+          "question.position": 2,
+          "question.help": "For each Subquestion (Row) select the best Aswer (Column)",
+          "question": "A Array Question Type uses Subquestions (Rows) and Answer Options (Columns)",
+          "question.type": "array",
+          "subquestion": [
+            {
+              "subquestion.id": 1001,
+              "subquestion.code": "Sub1",
+              "subquestion.position": 1,
+              "subquestion": "Subquestion One.",
+              "response": "Answer One"
+            },
+            {
+              "question.id": 1002,
+              "question.code": "Sub2",
+              "question.position": 2,
+              "subquestion": "Subquestion two.",
+              "response": "Answer Two"
+            }
+          ]
+        },
+        {
+          "questiongroup.id": 1002,
+          "questiongroup.name": "questiongroup name one",
+          "questions": [
+            {
+              "question.id": 1003,
+              "question.manadatory": "TRUE",
+              "question.code": "Q2",
+              "question.position": 1,
+              "question.help": "This is a mulitple Options Question with comments.",
+              "question": "Check that all that apply (Columns)",
+              "question.type": "Multiple choice with Comments",
+              "subquestion": [
+                {
+                  "subquestion.id": 1003,
+                  "subquestion.code": "Sub1",
+                  "subquestion.position": 1,
+                  "subquestion": "I am Glad.",
+                  "response": "TRUE",
+                  "comment": " "
+                },
+                {
+                  "subquestion.id": 1004,
+                  "subquestion.code": "Sub2",
+                  "subquestion.position": 2,
+                  "subquestion": "I dont care.",
+                  "response": "FALSE",
+                  "comment": "comment here"
+                },
+                {
+                  "subquestion.id": 1005,
+                  "subquestion.code": "Sub3",
+                  "subquestion.position": 3,
+                  "subquestion": "I am happy",
+                  "response": "TRUE",
+                  "comment": " "
+                },
+                {
+                  "subquestion.id": 1006,
+                  "subquestion.code": "Sub4",
+                  "subquestion.position": 4,
+                  "subquestion": "Other",
+                  "response": "Other Text",
+                  "comment": " "
+                }
+              ]
+            },
+            {
+              "question.id": 1004,
+              "question.manadatory": "FASLE",
+              "question.code": "Q2",
+              "question.position": 2,
+              "question.help": "Please allow user to save with as formatted text.",
+              "question": "Describe something with formated Text",
+              "question.type": "Multiple choice with Comments",
+              "response": "HTML Formatted TEXT Goes Here"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
