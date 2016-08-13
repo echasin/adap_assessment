@@ -26,7 +26,7 @@ public class Response implements Serializable {
     private Long id;
 
     @NotNull
-    @Column(name = "details", nullable = false)
+    @Column(name = "details",columnDefinition = "text", nullable = false)
     private String details;
 
     @NotNull
@@ -47,7 +47,7 @@ public class Response implements Serializable {
     @Size(max = 25)
     @Column(name = "domain", length = 25, nullable = false)
     private String domain;
-
+    
     @ManyToOne
     private Questionnaire questionnaire;
 
@@ -75,7 +75,7 @@ public class Response implements Serializable {
         this.status = status;
     }
 
-    public String getLastmodifiedby() {
+	public String getLastmodifiedby() {
         return lastmodifiedby;
     }
 
