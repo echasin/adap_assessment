@@ -6,6 +6,7 @@ import com.innvo.domain.Response;
 import com.innvo.repository.QuestionnaireRepository;
 import com.innvo.repository.ResponseRepository;
 import com.innvo.repository.search.ResponseSearchRepository;
+import com.innvo.security.SpringSecurityAuditorAware;
 import com.innvo.web.rest.util.HeaderUtil;
 import com.innvo.web.rest.util.PaginationUtil;
 import org.slf4j.Logger;
@@ -46,11 +47,12 @@ public class ResponseResource {
     
     @Inject
     private ResponseSearchRepository responseSearchRepository;
-    
-
-    
+   
     @Inject
     private QuestionnaireRepository questionnaireRepository;
+   
+    @Inject
+    SpringSecurityAuditorAware springSecurityAuditorAware; 
     
     /**
      * POST  /responses : Create a new response.
@@ -176,6 +178,47 @@ public class ResponseResource {
     }
 
     
+    
+    /**
+     * GET  /responses : get the response by user and date.
+     *
+     * @param id the id of the response to retrieve
+     * @return the ResponseEntity with status 200 (OK) and with body the response, or with status 404 (Not Found)
+     */
+    @RequestMapping(value = "/responseByUserAndDate",
+        method = RequestMethod.GET,
+        produces = MediaType.APPLICATION_JSON_VALUE)
+    @Timed
+    public ResponseEntity<Response> getResponseByUser() {
+        log.debug("REST request to get Response by user and date");
+        String userName=springSecurityAuditorAware.getCurrentAuditor();
+        ZonedDateTime lastmodifieddatetime=responseRepository.findMaxLastmodifieddatetimeByUsername(userName);
+        Response response = responseRepository.findByusernameAndLastmodifieddatetime(userName, lastmodifieddatetime);
+        return Optional.ofNullable(response)
+            .map(result -> new ResponseEntity<>(
+                result,
+                HttpStatus.OK))
+            .orElse(new ResponseEntity<>(HttpStatus.NOT_FOUND));
+    }
+    
+    
+    /**
+     * GET  /responses : get the response by user And Questionnaire.
+     *
+     * @param id the id of the response to retrieve
+     * @return the ResponseEntity with status 200 (OK) and with body the response, or with status 404 (Not Found)
+     */
+    @RequestMapping(value = "/responseByUserAndQuestionnaire/{id}",
+        method = RequestMethod.GET,
+        produces = MediaType.APPLICATION_JSON_VALUE)
+    @Timed
+    public List<Response> getResponseByUserAndQuestionnaire(@PathVariable("id") Long id) {
+        log.debug("REST request to get Response by user and date");
+        String userName=springSecurityAuditorAware.getCurrentAuditor();
+        List<Response> response = responseRepository.findByUsernameAndQuestionnaireId(userName, id);
+        	return response;
+    }
+    
     /**
      * GET  /save response
      *
@@ -188,6 +231,7 @@ public class ResponseResource {
     public void saveResponse(@PathVariable("id") Long id,
     		                 @PathVariable("details") String details) {
         log.debug("REST request to save Response : {}", id);
+        String login=springSecurityAuditorAware.getCurrentAuditor();
         Response response = new Response();
         Questionnaire questionnaire=questionnaireRepository.getOne(id);
         response.setQuestionnaire(questionnaire);
@@ -195,10 +239,42 @@ public class ResponseResource {
         response.setDomain("DEMO");
         response.setLastmodifiedby("echasin");
         response.setStatus("Active");
+        response.setUsername(login);
         Date date=new Date();
         ZonedDateTime lastmodifieddatetime = ZonedDateTime.ofInstant(date.toInstant(),
                 ZoneId.systemDefault());
         response.setLastmodifieddatetime(lastmodifieddatetime);
+        responseRepository.save(response);
+    }
+    
+    
+    /**
+     * GET  /save response
+     *
+     * @param id the id of the questionnaire
+     */
+    @RequestMapping(value = "/updateResponse/{id}/{details}",
+        method = RequestMethod.GET,
+        produces = MediaType.APPLICATION_JSON_VALUE)
+    @Timed
+    public void updateResponse(@PathVariable("id") Long id,
+    		                 @PathVariable("details") String details) {
+        log.debug("REST request to save Response : {}", id);
+        String login=springSecurityAuditorAware.getCurrentAuditor();
+        String userName=springSecurityAuditorAware.getCurrentAuditor();
+        ZonedDateTime lastmodifieddatetime=responseRepository.findMaxLastmodifieddatetimeByUsername(userName);
+        Response response = responseRepository.findByusernameAndLastmodifieddatetime(userName, lastmodifieddatetime);
+        Questionnaire questionnaire=questionnaireRepository.getOne(id);
+        response.setQuestionnaire(questionnaire);
+        response.setDetails(details);
+        response.setDomain("DEMO");
+        response.setLastmodifiedby("echasin");
+        response.setStatus("Active");
+        response.setUsername(login);
+        Date date=new Date();
+        ZonedDateTime newlastmodifieddatetime = ZonedDateTime.ofInstant(date.toInstant(),
+                ZoneId.systemDefault());
+        response.setLastmodifieddatetime(newlastmodifieddatetime);
         responseRepository.save(response);
     }
 

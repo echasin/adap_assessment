@@ -41,6 +41,10 @@
                 <constraints nullable="false" />
             </column>
             
+            <column name="username" type="varchar(25)">
+                <constraints/>
+            </column>
+            
             
             <column name="questionnaire_id" type="bigint">
                 <constraints nullable="true" />
