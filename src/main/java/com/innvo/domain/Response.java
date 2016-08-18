@@ -25,8 +25,7 @@ public class Response implements Serializable {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
 
-    @NotNull
-    @Column(name = "details",columnDefinition = "text", nullable = false)
+    @Column(name = "details",columnDefinition = "text")
     private String details;
 
     @NotNull
@@ -48,7 +47,6 @@ public class Response implements Serializable {
     @Column(name = "domain", length = 25, nullable = false)
     private String domain;
     
-    @NotNull
     @Size(max = 25)
     @Column(name = "username", length = 25)
     private String username;
