@@ -28,8 +28,6 @@ import java.time.ZonedDateTime;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
-import java.util.stream.StreamSupport;
 
 import static org.elasticsearch.index.query.QueryBuilders.*;
 
@@ -216,7 +214,7 @@ public class ResponseResource {
         log.debug("REST request to get Response by user and date");
         String userName=springSecurityAuditorAware.getCurrentAuditor();
         List<Response> response = responseRepository.findByUsernameAndQuestionnaireId(userName, id);
-        	return response;
+        return response;
     }
     
     /**
