@@ -2,7 +2,7 @@ version: '2'
 services:
     adap_assessment-elasticsearch:
         container_name: adap_assessment-elasticsearch
-        image: elasticsearch:1.7.5
+        image: elasticsearch:2.3.5
         # volumes:
         #     - ~/volumes/jhipster/adap_assessment/elasticsearch/:/usr/share/elasticsearch/data/
         ports:

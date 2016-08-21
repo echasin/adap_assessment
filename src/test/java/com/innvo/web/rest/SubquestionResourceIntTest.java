@@ -10,13 +10,11 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import static org.hamcrest.Matchers.hasItem;
 import org.mockito.MockitoAnnotations;
-import org.springframework.boot.test.IntegrationTest;
-import org.springframework.boot.test.SpringApplicationConfiguration;
+import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
 import org.springframework.data.web.PageableHandlerMethodArgumentResolver;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
-import org.springframework.test.context.web.WebAppConfiguration;
+import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.util.ReflectionTestUtils;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
@@ -24,6 +22,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.PostConstruct;
 import javax.inject.Inject;
+import javax.persistence.EntityManager;
 import java.time.Instant;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
@@ -34,20 +33,15 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
-
 /**
  * Test class for the SubquestionResource REST controller.
  *
  * @see SubquestionResource
  */
-@RunWith(SpringJUnit4ClassRunner.class)
-@SpringApplicationConfiguration(classes = AdapAssessmentApp.class)
-@WebAppConfiguration
-@IntegrationTest
+@RunWith(SpringRunner.class)
+@SpringBootTest(classes = AdapAssessmentApp.class)
 public class SubquestionResourceIntTest {
-
     private static final DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'").withZone(ZoneId.of("Z"));
-
     private static final String DEFAULT_SUBQUESTION = "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA";
     private static final String UPDATED_SUBQUESTION = "BBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBB";
     private static final String DEFAULT_CODE = "AAAAAAAAAAAAAAAAAAAAAAAAA";
@@ -78,6 +72,9 @@ public class SubquestionResourceIntTest {
     @Inject
     private PageableHandlerMethodArgumentResolver pageableArgumentResolver;
 
+    @Inject
+    private EntityManager em;
+
     private MockMvc restSubquestionMockMvc;
 
     private Subquestion subquestion;
@@ -93,9 +90,14 @@ public class SubquestionResourceIntTest {
             .setMessageConverters(jacksonMessageConverter).build();
     }
 
-    @Before
-    public void initTest() {
-        subquestionSearchRepository.deleteAll();
+    /**
+     * Create an entity for this test.
+     *
+     * This is a static method, as tests for other entities might also need it,
+     * if they test an entity which requires the current entity.
+     */
+    public static Subquestion createEntity(EntityManager em) {
+        Subquestion subquestion = new Subquestion();
         subquestion = new Subquestion();
         subquestion.setSubquestion(DEFAULT_SUBQUESTION);
         subquestion.setCode(DEFAULT_CODE);
@@ -104,6 +106,13 @@ public class SubquestionResourceIntTest {
         subquestion.setLastmodifiedby(DEFAULT_LASTMODIFIEDBY);
         subquestion.setLastmodifieddatetime(DEFAULT_LASTMODIFIEDDATETIME);
         subquestion.setDomain(DEFAULT_DOMAIN);
+        return subquestion;
+    }
+
+    @Before
+    public void initTest() {
+        subquestionSearchRepository.deleteAll();
+        subquestion = createEntity(em);
     }
 
     @Test
@@ -270,7 +279,7 @@ public class SubquestionResourceIntTest {
         // Get all the subquestions
         restSubquestionMockMvc.perform(get("/api/subquestions?sort=id,desc"))
                 .andExpect(status().isOk())
-                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE))
                 .andExpect(jsonPath("$.[*].id").value(hasItem(subquestion.getId().intValue())))
                 .andExpect(jsonPath("$.[*].subquestion").value(hasItem(DEFAULT_SUBQUESTION.toString())))
                 .andExpect(jsonPath("$.[*].code").value(hasItem(DEFAULT_CODE.toString())))
@@ -290,7 +299,7 @@ public class SubquestionResourceIntTest {
         // Get the subquestion
         restSubquestionMockMvc.perform(get("/api/subquestions/{id}", subquestion.getId()))
             .andExpect(status().isOk())
-            .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+            .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE))
             .andExpect(jsonPath("$.id").value(subquestion.getId().intValue()))
             .andExpect(jsonPath("$.subquestion").value(DEFAULT_SUBQUESTION.toString()))
             .andExpect(jsonPath("$.code").value(DEFAULT_CODE.toString()))
@@ -318,8 +327,7 @@ public class SubquestionResourceIntTest {
         int databaseSizeBeforeUpdate = subquestionRepository.findAll().size();
 
         // Update the subquestion
-        Subquestion updatedSubquestion = new Subquestion();
-        updatedSubquestion.setId(subquestion.getId());
+        Subquestion updatedSubquestion = subquestionRepository.findOne(subquestion.getId());
         updatedSubquestion.setSubquestion(UPDATED_SUBQUESTION);
         updatedSubquestion.setCode(UPDATED_CODE);
         updatedSubquestion.setPosition(UPDATED_POSITION);
@@ -382,7 +390,7 @@ public class SubquestionResourceIntTest {
         // Search the subquestion
         restSubquestionMockMvc.perform(get("/api/_search/subquestions?query=id:" + subquestion.getId()))
             .andExpect(status().isOk())
-            .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+            .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE))
             .andExpect(jsonPath("$.[*].id").value(hasItem(subquestion.getId().intValue())))
             .andExpect(jsonPath("$.[*].subquestion").value(hasItem(DEFAULT_SUBQUESTION.toString())))
             .andExpect(jsonPath("$.[*].code").value(hasItem(DEFAULT_CODE.toString())))

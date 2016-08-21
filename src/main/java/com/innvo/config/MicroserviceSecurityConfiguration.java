@@ -54,7 +54,7 @@ package com.innvo.config;
               .authorizeRequests()
               .antMatchers("/api/**").authenticated()
               .antMatchers("/management/**").hasAuthority(AuthoritiesConstants.ADMIN)
-              .antMatchers("/configuration/ui").permitAll()
+              .antMatchers("/swagger-resources/configuration/ui").permitAll()
           .and()
               .apply(securityConfigurerAdapter());
 
