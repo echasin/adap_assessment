@@ -2,6 +2,7 @@ package com.innvo.web.rest;
 
 import com.codahale.metrics.annotation.Timed;
 import com.innvo.domain.Questionnaire;
+
 import com.innvo.repository.QuestionnaireRepository;
 import com.innvo.repository.search.QuestionnaireSearchRepository;
 import com.innvo.web.rest.util.HeaderUtil;
@@ -38,10 +39,10 @@ public class QuestionnaireResource {
         
     @Inject
     private QuestionnaireRepository questionnaireRepository;
-    
+
     @Inject
     private QuestionnaireSearchRepository questionnaireSearchRepository;
-    
+
     /**
      * POST  /questionnaires : Create a new questionnaire.
      *
@@ -104,7 +105,7 @@ public class QuestionnaireResource {
     public ResponseEntity<List<Questionnaire>> getAllQuestionnaires(Pageable pageable)
         throws URISyntaxException {
         log.debug("REST request to get a page of Questionnaires");
-        Page<Questionnaire> page = questionnaireRepository.findAll(pageable); 
+        Page<Questionnaire> page = questionnaireRepository.findAll(pageable);
         HttpHeaders headers = PaginationUtil.generatePaginationHttpHeaders(page, "/api/questionnaires");
         return new ResponseEntity<>(page.getContent(), headers, HttpStatus.OK);
     }
@@ -150,8 +151,10 @@ public class QuestionnaireResource {
      * SEARCH  /_search/questionnaires?query=:query : search for the questionnaire corresponding
      * to the query.
      *
-     * @param query the query of the questionnaire search
+     * @param query the query of the questionnaire search 
+     * @param pageable the pagination information
      * @return the result of the search
+     * @throws URISyntaxException if there is an error to generate the pagination HTTP headers
      */
     @RequestMapping(value = "/_search/questionnaires",
         method = RequestMethod.GET,
@@ -164,5 +167,6 @@ public class QuestionnaireResource {
         HttpHeaders headers = PaginationUtil.generateSearchPaginationHttpHeaders(query, page, "/api/_search/questionnaires");
         return new ResponseEntity<>(page.getContent(), headers, HttpStatus.OK);
     }
+
 
 }

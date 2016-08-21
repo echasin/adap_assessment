@@ -1,7 +1,8 @@
 package com.innvo;
 
+import com.innvo.config.DefaultProfileUtil;
 import org.springframework.boot.builder.SpringApplicationBuilder;
-import org.springframework.boot.context.web.SpringBootServletInitializer;
+import org.springframework.boot.web.support.SpringBootServletInitializer;
 
 /**
  * This is a helper Java class that provides an alternative to creating a web.xml.
@@ -14,7 +15,7 @@ public class ApplicationWebXml extends SpringBootServletInitializer {
         /**
          * set a default to use when no profile is configured.
          */
-        AdapAssessmentApp.addDefaultProfile(application.application());
+        DefaultProfileUtil.addDefaultProfile(application.application());
         return application.sources(AdapAssessmentApp.class);
     }
 }

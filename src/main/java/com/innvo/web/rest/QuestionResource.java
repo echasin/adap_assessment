@@ -2,6 +2,7 @@ package com.innvo.web.rest;
 
 import com.codahale.metrics.annotation.Timed;
 import com.innvo.domain.Question;
+
 import com.innvo.repository.QuestionRepository;
 import com.innvo.repository.search.QuestionSearchRepository;
 import com.innvo.web.rest.util.HeaderUtil;
@@ -38,10 +39,10 @@ public class QuestionResource {
         
     @Inject
     private QuestionRepository questionRepository;
-    
+
     @Inject
     private QuestionSearchRepository questionSearchRepository;
-    
+
     /**
      * POST  /questions : Create a new question.
      *
@@ -104,7 +105,7 @@ public class QuestionResource {
     public ResponseEntity<List<Question>> getAllQuestions(Pageable pageable)
         throws URISyntaxException {
         log.debug("REST request to get a page of Questions");
-        Page<Question> page = questionRepository.findAll(pageable); 
+        Page<Question> page = questionRepository.findAll(pageable);
         HttpHeaders headers = PaginationUtil.generatePaginationHttpHeaders(page, "/api/questions");
         return new ResponseEntity<>(page.getContent(), headers, HttpStatus.OK);
     }
@@ -150,8 +151,10 @@ public class QuestionResource {
      * SEARCH  /_search/questions?query=:query : search for the question corresponding
      * to the query.
      *
-     * @param query the query of the question search
+     * @param query the query of the question search 
+     * @param pageable the pagination information
      * @return the result of the search
+     * @throws URISyntaxException if there is an error to generate the pagination HTTP headers
      */
     @RequestMapping(value = "/_search/questions",
         method = RequestMethod.GET,
@@ -165,7 +168,6 @@ public class QuestionResource {
         return new ResponseEntity<>(page.getContent(), headers, HttpStatus.OK);
     }
 
-    
 
     /**
      * GET  /questions/:id : get questions by question group.
@@ -186,4 +188,5 @@ public class QuestionResource {
         return new ResponseEntity<>(page.getContent(), headers, HttpStatus.OK);
   
     }
+
 }

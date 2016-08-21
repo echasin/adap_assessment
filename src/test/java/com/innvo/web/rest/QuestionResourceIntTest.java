@@ -10,13 +10,11 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import static org.hamcrest.Matchers.hasItem;
 import org.mockito.MockitoAnnotations;
-import org.springframework.boot.test.IntegrationTest;
-import org.springframework.boot.test.SpringApplicationConfiguration;
+import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
 import org.springframework.data.web.PageableHandlerMethodArgumentResolver;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
-import org.springframework.test.context.web.WebAppConfiguration;
+import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.util.ReflectionTestUtils;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
@@ -24,6 +22,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.PostConstruct;
 import javax.inject.Inject;
+import javax.persistence.EntityManager;
 import java.time.Instant;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
@@ -34,20 +33,15 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
-
 /**
  * Test class for the QuestionResource REST controller.
  *
  * @see QuestionResource
  */
-@RunWith(SpringJUnit4ClassRunner.class)
-@SpringApplicationConfiguration(classes = AdapAssessmentApp.class)
-@WebAppConfiguration
-@IntegrationTest
+@RunWith(SpringRunner.class)
+@SpringBootTest(classes = AdapAssessmentApp.class)
 public class QuestionResourceIntTest {
-
     private static final DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'").withZone(ZoneId.of("Z"));
-
     private static final String DEFAULT_QUESTION = "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA";
     private static final String UPDATED_QUESTION = "BBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBB";
 
@@ -85,6 +79,9 @@ public class QuestionResourceIntTest {
     @Inject
     private PageableHandlerMethodArgumentResolver pageableArgumentResolver;
 
+    @Inject
+    private EntityManager em;
+
     private MockMvc restQuestionMockMvc;
 
     private Question question;
@@ -100,9 +97,14 @@ public class QuestionResourceIntTest {
             .setMessageConverters(jacksonMessageConverter).build();
     }
 
-    @Before
-    public void initTest() {
-        questionSearchRepository.deleteAll();
+    /**
+     * Create an entity for this test.
+     *
+     * This is a static method, as tests for other entities might also need it,
+     * if they test an entity which requires the current entity.
+     */
+    public static Question createEntity(EntityManager em) {
+        Question question = new Question();
         question = new Question();
         question.setQuestion(DEFAULT_QUESTION);
         question.setMandatory(DEFAULT_MANDATORY);
@@ -114,6 +116,13 @@ public class QuestionResourceIntTest {
         question.setDomain(DEFAULT_DOMAIN);
         question.setType(DEFAULT_TYPE);
         question.setHelp(DEFAULT_HELP);
+        return question;
+    }
+
+    @Before
+    public void initTest() {
+        questionSearchRepository.deleteAll();
+        question = createEntity(em);
     }
 
     @Test
@@ -301,7 +310,7 @@ public class QuestionResourceIntTest {
         // Get all the questions
         restQuestionMockMvc.perform(get("/api/questions?sort=id,desc"))
                 .andExpect(status().isOk())
-                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE))
                 .andExpect(jsonPath("$.[*].id").value(hasItem(question.getId().intValue())))
                 .andExpect(jsonPath("$.[*].question").value(hasItem(DEFAULT_QUESTION.toString())))
                 .andExpect(jsonPath("$.[*].mandatory").value(hasItem(DEFAULT_MANDATORY.booleanValue())))
@@ -324,7 +333,7 @@ public class QuestionResourceIntTest {
         // Get the question
         restQuestionMockMvc.perform(get("/api/questions/{id}", question.getId()))
             .andExpect(status().isOk())
-            .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+            .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE))
             .andExpect(jsonPath("$.id").value(question.getId().intValue()))
             .andExpect(jsonPath("$.question").value(DEFAULT_QUESTION.toString()))
             .andExpect(jsonPath("$.mandatory").value(DEFAULT_MANDATORY.booleanValue()))
@@ -355,8 +364,7 @@ public class QuestionResourceIntTest {
         int databaseSizeBeforeUpdate = questionRepository.findAll().size();
 
         // Update the question
-        Question updatedQuestion = new Question();
-        updatedQuestion.setId(question.getId());
+        Question updatedQuestion = questionRepository.findOne(question.getId());
         updatedQuestion.setQuestion(UPDATED_QUESTION);
         updatedQuestion.setMandatory(UPDATED_MANDATORY);
         updatedQuestion.setCode(UPDATED_CODE);
@@ -425,7 +433,7 @@ public class QuestionResourceIntTest {
         // Search the question
         restQuestionMockMvc.perform(get("/api/_search/questions?query=id:" + question.getId()))
             .andExpect(status().isOk())
-            .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+            .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE))
             .andExpect(jsonPath("$.[*].id").value(hasItem(question.getId().intValue())))
             .andExpect(jsonPath("$.[*].question").value(hasItem(DEFAULT_QUESTION.toString())))
             .andExpect(jsonPath("$.[*].mandatory").value(hasItem(DEFAULT_MANDATORY.booleanValue())))

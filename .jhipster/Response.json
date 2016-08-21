@@ -12,7 +12,6 @@
             "fieldName": "details",
             "fieldType": "String",
             "fieldValidateRules": [
-                "required"
             ]
         },
 		{
@@ -48,7 +47,7 @@
                 "maxlength"
             ],
             "fieldValidateRulesMaxlength": "25"
-        }
+        }	
     ],
     "changelogDate": "20160717205834",
     "dto": "no",

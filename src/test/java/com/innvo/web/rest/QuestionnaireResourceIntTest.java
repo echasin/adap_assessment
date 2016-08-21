@@ -10,13 +10,11 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import static org.hamcrest.Matchers.hasItem;
 import org.mockito.MockitoAnnotations;
-import org.springframework.boot.test.IntegrationTest;
-import org.springframework.boot.test.SpringApplicationConfiguration;
+import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
 import org.springframework.data.web.PageableHandlerMethodArgumentResolver;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
-import org.springframework.test.context.web.WebAppConfiguration;
+import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.util.ReflectionTestUtils;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
@@ -24,6 +22,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.PostConstruct;
 import javax.inject.Inject;
+import javax.persistence.EntityManager;
 import java.time.Instant;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
@@ -34,20 +33,15 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
-
 /**
  * Test class for the QuestionnaireResource REST controller.
  *
  * @see QuestionnaireResource
  */
-@RunWith(SpringJUnit4ClassRunner.class)
-@SpringApplicationConfiguration(classes = AdapAssessmentApp.class)
-@WebAppConfiguration
-@IntegrationTest
+@RunWith(SpringRunner.class)
+@SpringBootTest(classes = AdapAssessmentApp.class)
 public class QuestionnaireResourceIntTest {
-
     private static final DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'").withZone(ZoneId.of("Z"));
-
     private static final String DEFAULT_TITLE = "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA";
     private static final String UPDATED_TITLE = "BBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBB";
     private static final String DEFAULT_STATUS = "AAAAAAAAAAAAAAAAAAAAAAAAA";
@@ -73,6 +67,9 @@ public class QuestionnaireResourceIntTest {
     @Inject
     private PageableHandlerMethodArgumentResolver pageableArgumentResolver;
 
+    @Inject
+    private EntityManager em;
+
     private MockMvc restQuestionnaireMockMvc;
 
     private Questionnaire questionnaire;
@@ -88,15 +85,27 @@ public class QuestionnaireResourceIntTest {
             .setMessageConverters(jacksonMessageConverter).build();
     }
 
-    @Before
-    public void initTest() {
-        questionnaireSearchRepository.deleteAll();
+    /**
+     * Create an entity for this test.
+     *
+     * This is a static method, as tests for other entities might also need it,
+     * if they test an entity which requires the current entity.
+     */
+    public static Questionnaire createEntity(EntityManager em) {
+        Questionnaire questionnaire = new Questionnaire();
         questionnaire = new Questionnaire();
         questionnaire.setTitle(DEFAULT_TITLE);
         questionnaire.setStatus(DEFAULT_STATUS);
         questionnaire.setLastmodifiedby(DEFAULT_LASTMODIFIEDBY);
         questionnaire.setLastmodifieddatetime(DEFAULT_LASTMODIFIEDDATETIME);
         questionnaire.setDomain(DEFAULT_DOMAIN);
+        return questionnaire;
+    }
+
+    @Before
+    public void initTest() {
+        questionnaireSearchRepository.deleteAll();
+        questionnaire = createEntity(em);
     }
 
     @Test
@@ -207,7 +216,7 @@ public class QuestionnaireResourceIntTest {
         // Get all the questionnaires
         restQuestionnaireMockMvc.perform(get("/api/questionnaires?sort=id,desc"))
                 .andExpect(status().isOk())
-                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE))
                 .andExpect(jsonPath("$.[*].id").value(hasItem(questionnaire.getId().intValue())))
                 .andExpect(jsonPath("$.[*].title").value(hasItem(DEFAULT_TITLE.toString())))
                 .andExpect(jsonPath("$.[*].status").value(hasItem(DEFAULT_STATUS.toString())))
@@ -225,7 +234,7 @@ public class QuestionnaireResourceIntTest {
         // Get the questionnaire
         restQuestionnaireMockMvc.perform(get("/api/questionnaires/{id}", questionnaire.getId()))
             .andExpect(status().isOk())
-            .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+            .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE))
             .andExpect(jsonPath("$.id").value(questionnaire.getId().intValue()))
             .andExpect(jsonPath("$.title").value(DEFAULT_TITLE.toString()))
             .andExpect(jsonPath("$.status").value(DEFAULT_STATUS.toString()))
@@ -251,8 +260,7 @@ public class QuestionnaireResourceIntTest {
         int databaseSizeBeforeUpdate = questionnaireRepository.findAll().size();
 
         // Update the questionnaire
-        Questionnaire updatedQuestionnaire = new Questionnaire();
-        updatedQuestionnaire.setId(questionnaire.getId());
+        Questionnaire updatedQuestionnaire = questionnaireRepository.findOne(questionnaire.getId());
         updatedQuestionnaire.setTitle(UPDATED_TITLE);
         updatedQuestionnaire.setStatus(UPDATED_STATUS);
         updatedQuestionnaire.setLastmodifiedby(UPDATED_LASTMODIFIEDBY);
@@ -311,7 +319,7 @@ public class QuestionnaireResourceIntTest {
         // Search the questionnaire
         restQuestionnaireMockMvc.perform(get("/api/_search/questionnaires?query=id:" + questionnaire.getId()))
             .andExpect(status().isOk())
-            .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+            .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE))
             .andExpect(jsonPath("$.[*].id").value(hasItem(questionnaire.getId().intValue())))
             .andExpect(jsonPath("$.[*].title").value(hasItem(DEFAULT_TITLE.toString())))
             .andExpect(jsonPath("$.[*].status").value(hasItem(DEFAULT_STATUS.toString())))

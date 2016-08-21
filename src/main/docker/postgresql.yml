@@ -2,7 +2,7 @@ version: '2'
 services:
     adap_assessment-postgresql:
         container_name: adap_assessment-postgresql
-        image: postgres:9.5.1
+        image: postgres:9.5.3
         # volumes:
         #     - ~/volumes/jhipster/adap_assessment/postgresql/:/var/lib/postgresql/
         environment:
