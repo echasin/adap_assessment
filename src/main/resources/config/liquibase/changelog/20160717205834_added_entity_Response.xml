@@ -22,7 +22,6 @@
                 <constraints primaryKey="true" nullable="false"/>
             </column>
             <column name="details" type="varchar(25500)">
-                <constraints nullable="false" />
             </column>
             
             <column name="status" type="varchar(25)">
@@ -39,6 +38,9 @@
             
             <column name="domain" type="varchar(25)">
                 <constraints nullable="false" />
+            </column>
+            
+            <column name="username" type="varchar(25)">
             </column>
             
             

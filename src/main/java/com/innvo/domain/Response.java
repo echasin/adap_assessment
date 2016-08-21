@@ -25,8 +25,7 @@ public class Response implements Serializable {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
 
-    @NotNull
-    @Column(name = "details",columnDefinition = "text", nullable = false)
+    @Column(name = "details",columnDefinition = "text")
     private String details;
 
     @NotNull
@@ -47,6 +46,10 @@ public class Response implements Serializable {
     @Size(max = 25)
     @Column(name = "domain", length = 25, nullable = false)
     private String domain;
+    
+    @Size(max = 25)
+    @Column(name = "username", length = 25)
+    private String username;
     
     @ManyToOne
     private Questionnaire questionnaire;
@@ -99,7 +102,15 @@ public class Response implements Serializable {
         this.domain = domain;
     }
 
-    public Questionnaire getQuestionnaire() {
+	public String getUsername() {
+		return username;
+	}
+
+	public void setUsername(String username) {
+		this.username = username;
+	}
+
+	public Questionnaire getQuestionnaire() {
         return questionnaire;
     }
 
@@ -136,6 +147,7 @@ public class Response implements Serializable {
             ", lastmodifiedby='" + lastmodifiedby + "'" +
             ", lastmodifieddatetime='" + lastmodifieddatetime + "'" +
             ", domain='" + domain + "'" +
+            ", username='" + username + "'" +
             '}';
     }
 }

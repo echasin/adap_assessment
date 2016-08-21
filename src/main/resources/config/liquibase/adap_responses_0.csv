@@ -1,2 +1,2 @@
-id, details, status, lastmodifiedby, lastmodifieddatetime, domain, questionnaire_id
-1000,"{JSON data goes here}","Active","echasin","2016-07-17 00:00:00","user",1000
+id, details, status, lastmodifiedby, lastmodifieddatetime, domain, username,questionnaire_id
+1000,"{"questiongroups":[{"questiongroup":"1000","questions":[{"question":1001,"response":5},{"question":1002,"subquestion":1001,"response":"A1"},{"question":1002,"subquestion":1002,"response":"A1"}]}]}","Active","echasin","2016-07-17 00:00:00","user","user",1000
