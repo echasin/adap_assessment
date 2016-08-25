@@ -164,5 +164,23 @@ public class QuestiongroupResource {
         HttpHeaders headers = PaginationUtil.generateSearchPaginationHttpHeaders(query, page, "/api/_search/questiongroups");
         return new ResponseEntity<>(page.getContent(), headers, HttpStatus.OK);
     }
+    
+    
+    /**
+     * GET  /questiongroups?id=:id : get all the questiongroups by questionnaire.
+     *
+     * @return the ResponseEntity with status 200 (OK) and the list of questiongroups in body
+     * @throws URISyntaxException if there is an error to generate the pagination HTTP headers
+     */
+    @RequestMapping(value = "/questiongroupsByQuestionnaire/{id}",
+        method = RequestMethod.GET,
+        produces = MediaType.APPLICATION_JSON_VALUE)
+    @Timed
+    public ResponseEntity<List<Questiongroup>> getAllQuestiongroupsByQuestionnaire(@PathVariable Long id)
+        throws URISyntaxException {
+        log.debug("REST request to get Questiongroups by questionnaire");
+        List<Questiongroup> list = questiongroupRepository.findByQuestionnaireId(id); 
+        return new ResponseEntity<>(list, HttpStatus.OK);
+    }
 
 }
