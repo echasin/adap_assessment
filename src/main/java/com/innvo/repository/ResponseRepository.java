@@ -17,10 +17,10 @@ import java.util.List;
 @SuppressWarnings("unused")
 public interface ResponseRepository extends JpaRepository<Response,Long> {	
 	
-	@Query("SELECT MAX(u.lastmodifieddatetime) FROM Response u WHERE u.username=:username)")
-	ZonedDateTime findMaxLastmodifieddatetimeByUsername(@Param("username") String username); 
+	@Query("SELECT MAX(u.lastmodifieddatetime) FROM Response u WHERE u.username=:username And u.questionnaire.id=:id)")
+	ZonedDateTime findMaxLastmodifieddatetimeByUsernameAndQuestionnaireId(@Param("username") String username,@Param("id")long id); 
 	
-	Response findByusernameAndLastmodifieddatetime(String username,ZonedDateTime lastmodifieddatetime);
+	Response findByusernameAndLastmodifieddatetimeAndQuestionnaireId(String username,ZonedDateTime lastmodifieddatetime,long id);
 
 	List<Response> findByUsernameAndQuestionnaireId(String username,long id);
 
