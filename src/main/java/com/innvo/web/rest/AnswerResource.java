@@ -2,6 +2,7 @@ package com.innvo.web.rest;
 
 import com.codahale.metrics.annotation.Timed;
 import com.innvo.domain.Answer;
+
 import com.innvo.repository.AnswerRepository;
 import com.innvo.repository.search.AnswerSearchRepository;
 import com.innvo.web.rest.util.HeaderUtil;
@@ -38,10 +39,10 @@ public class AnswerResource {
         
     @Inject
     private AnswerRepository answerRepository;
-    
+
     @Inject
     private AnswerSearchRepository answerSearchRepository;
-    
+
     /**
      * POST  /answers : Create a new answer.
      *
@@ -150,8 +151,10 @@ public class AnswerResource {
      * SEARCH  /_search/answers?query=:query : search for the answer corresponding
      * to the query.
      *
-     * @param query the query of the answer search
+     * @param query the query of the answer search 
+     * @param pageable the pagination information
      * @return the result of the search
+     * @throws URISyntaxException if there is an error to generate the pagination HTTP headers
      */
     @RequestMapping(value = "/_search/answers",
         method = RequestMethod.GET,
@@ -182,4 +185,5 @@ public class AnswerResource {
         HttpHeaders headers = PaginationUtil.generatePaginationHttpHeaders(page, "/api/answers");
         return new ResponseEntity<>(page.getContent(), headers, HttpStatus.OK);    
     }
+
 }

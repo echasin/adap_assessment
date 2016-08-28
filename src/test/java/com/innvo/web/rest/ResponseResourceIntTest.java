@@ -10,13 +10,11 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import static org.hamcrest.Matchers.hasItem;
 import org.mockito.MockitoAnnotations;
-import org.springframework.boot.test.IntegrationTest;
-import org.springframework.boot.test.SpringApplicationConfiguration;
+import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
 import org.springframework.data.web.PageableHandlerMethodArgumentResolver;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
-import org.springframework.test.context.web.WebAppConfiguration;
+import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.util.ReflectionTestUtils;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
@@ -24,6 +22,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.PostConstruct;
 import javax.inject.Inject;
+import javax.persistence.EntityManager;
 import java.time.Instant;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
@@ -34,20 +33,15 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
-
 /**
  * Test class for the ResponseResource REST controller.
  *
  * @see ResponseResource
  */
-@RunWith(SpringJUnit4ClassRunner.class)
-@SpringApplicationConfiguration(classes = AdapAssessmentApp.class)
-@WebAppConfiguration
-@IntegrationTest
+@RunWith(SpringRunner.class)
+@SpringBootTest(classes = AdapAssessmentApp.class)
 public class ResponseResourceIntTest {
-
     private static final DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'").withZone(ZoneId.of("Z"));
-
     private static final String DEFAULT_DETAILS = "AAAAA";
     private static final String UPDATED_DETAILS = "BBBBB";
     private static final String DEFAULT_STATUS = "AAAAAAAAAAAAAAAAAAAAAAAAA";
@@ -73,6 +67,9 @@ public class ResponseResourceIntTest {
     @Inject
     private PageableHandlerMethodArgumentResolver pageableArgumentResolver;
 
+    @Inject
+    private EntityManager em;
+
     private MockMvc restResponseMockMvc;
 
     private Response response;
@@ -88,15 +85,27 @@ public class ResponseResourceIntTest {
             .setMessageConverters(jacksonMessageConverter).build();
     }
 
-    @Before
-    public void initTest() {
-        responseSearchRepository.deleteAll();
+    /**
+     * Create an entity for this test.
+     *
+     * This is a static method, as tests for other entities might also need it,
+     * if they test an entity which requires the current entity.
+     */
+    public static Response createEntity(EntityManager em) {
+        Response response = new Response();
         response = new Response();
         response.setDetails(DEFAULT_DETAILS);
         response.setStatus(DEFAULT_STATUS);
         response.setLastmodifiedby(DEFAULT_LASTMODIFIEDBY);
         response.setLastmodifieddatetime(DEFAULT_LASTMODIFIEDDATETIME);
         response.setDomain(DEFAULT_DOMAIN);
+        return response;
+    }
+
+    @Before
+    public void initTest() {
+        responseSearchRepository.deleteAll();
+        response = createEntity(em);
     }
 
     @Test
@@ -225,7 +234,7 @@ public class ResponseResourceIntTest {
         // Get all the responses
         restResponseMockMvc.perform(get("/api/responses?sort=id,desc"))
                 .andExpect(status().isOk())
-                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE))
                 .andExpect(jsonPath("$.[*].id").value(hasItem(response.getId().intValue())))
                 .andExpect(jsonPath("$.[*].details").value(hasItem(DEFAULT_DETAILS.toString())))
                 .andExpect(jsonPath("$.[*].status").value(hasItem(DEFAULT_STATUS.toString())))
@@ -243,7 +252,7 @@ public class ResponseResourceIntTest {
         // Get the response
         restResponseMockMvc.perform(get("/api/responses/{id}", response.getId()))
             .andExpect(status().isOk())
-            .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+            .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE))
             .andExpect(jsonPath("$.id").value(response.getId().intValue()))
             .andExpect(jsonPath("$.details").value(DEFAULT_DETAILS.toString()))
             .andExpect(jsonPath("$.status").value(DEFAULT_STATUS.toString()))
@@ -269,8 +278,7 @@ public class ResponseResourceIntTest {
         int databaseSizeBeforeUpdate = responseRepository.findAll().size();
 
         // Update the response
-        Response updatedResponse = new Response();
-        updatedResponse.setId(response.getId());
+        Response updatedResponse = responseRepository.findOne(response.getId());
         updatedResponse.setDetails(UPDATED_DETAILS);
         updatedResponse.setStatus(UPDATED_STATUS);
         updatedResponse.setLastmodifiedby(UPDATED_LASTMODIFIEDBY);
@@ -329,7 +337,7 @@ public class ResponseResourceIntTest {
         // Search the response
         restResponseMockMvc.perform(get("/api/_search/responses?query=id:" + response.getId()))
             .andExpect(status().isOk())
-            .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+            .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE))
             .andExpect(jsonPath("$.[*].id").value(hasItem(response.getId().intValue())))
             .andExpect(jsonPath("$.[*].details").value(hasItem(DEFAULT_DETAILS.toString())))
             .andExpect(jsonPath("$.[*].status").value(hasItem(DEFAULT_STATUS.toString())))

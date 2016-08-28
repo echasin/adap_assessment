@@ -10,13 +10,11 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import static org.hamcrest.Matchers.hasItem;
 import org.mockito.MockitoAnnotations;
-import org.springframework.boot.test.IntegrationTest;
-import org.springframework.boot.test.SpringApplicationConfiguration;
+import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
 import org.springframework.data.web.PageableHandlerMethodArgumentResolver;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
-import org.springframework.test.context.web.WebAppConfiguration;
+import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.util.ReflectionTestUtils;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
@@ -24,6 +22,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.PostConstruct;
 import javax.inject.Inject;
+import javax.persistence.EntityManager;
 import java.time.Instant;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
@@ -34,20 +33,15 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
-
 /**
  * Test class for the QuestiongroupResource REST controller.
  *
  * @see QuestiongroupResource
  */
-@RunWith(SpringJUnit4ClassRunner.class)
-@SpringApplicationConfiguration(classes = AdapAssessmentApp.class)
-@WebAppConfiguration
-@IntegrationTest
+@RunWith(SpringRunner.class)
+@SpringBootTest(classes = AdapAssessmentApp.class)
 public class QuestiongroupResourceIntTest {
-
     private static final DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'").withZone(ZoneId.of("Z"));
-
     private static final String DEFAULT_TITLE = "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA";
     private static final String UPDATED_TITLE = "BBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBB";
     private static final String DEFAULT_DESCRIPTION = "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA";
@@ -78,6 +72,9 @@ public class QuestiongroupResourceIntTest {
     @Inject
     private PageableHandlerMethodArgumentResolver pageableArgumentResolver;
 
+    @Inject
+    private EntityManager em;
+
     private MockMvc restQuestiongroupMockMvc;
 
     private Questiongroup questiongroup;
@@ -93,9 +90,14 @@ public class QuestiongroupResourceIntTest {
             .setMessageConverters(jacksonMessageConverter).build();
     }
 
-    @Before
-    public void initTest() {
-        questiongroupSearchRepository.deleteAll();
+    /**
+     * Create an entity for this test.
+     *
+     * This is a static method, as tests for other entities might also need it,
+     * if they test an entity which requires the current entity.
+     */
+    public static Questiongroup createEntity(EntityManager em) {
+        Questiongroup questiongroup = new Questiongroup();
         questiongroup = new Questiongroup();
         questiongroup.setTitle(DEFAULT_TITLE);
         questiongroup.setDescription(DEFAULT_DESCRIPTION);
@@ -104,6 +106,13 @@ public class QuestiongroupResourceIntTest {
         questiongroup.setLastmodifiedby(DEFAULT_LASTMODIFIEDBY);
         questiongroup.setLastmodifieddatetime(DEFAULT_LASTMODIFIEDDATETIME);
         questiongroup.setDomain(DEFAULT_DOMAIN);
+        return questiongroup;
+    }
+
+    @Before
+    public void initTest() {
+        questiongroupSearchRepository.deleteAll();
+        questiongroup = createEntity(em);
     }
 
     @Test
@@ -270,7 +279,7 @@ public class QuestiongroupResourceIntTest {
         // Get all the questiongroups
         restQuestiongroupMockMvc.perform(get("/api/questiongroups?sort=id,desc"))
                 .andExpect(status().isOk())
-                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE))
                 .andExpect(jsonPath("$.[*].id").value(hasItem(questiongroup.getId().intValue())))
                 .andExpect(jsonPath("$.[*].title").value(hasItem(DEFAULT_TITLE.toString())))
                 .andExpect(jsonPath("$.[*].description").value(hasItem(DEFAULT_DESCRIPTION.toString())))
@@ -290,7 +299,7 @@ public class QuestiongroupResourceIntTest {
         // Get the questiongroup
         restQuestiongroupMockMvc.perform(get("/api/questiongroups/{id}", questiongroup.getId()))
             .andExpect(status().isOk())
-            .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+            .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE))
             .andExpect(jsonPath("$.id").value(questiongroup.getId().intValue()))
             .andExpect(jsonPath("$.title").value(DEFAULT_TITLE.toString()))
             .andExpect(jsonPath("$.description").value(DEFAULT_DESCRIPTION.toString()))
@@ -318,8 +327,7 @@ public class QuestiongroupResourceIntTest {
         int databaseSizeBeforeUpdate = questiongroupRepository.findAll().size();
 
         // Update the questiongroup
-        Questiongroup updatedQuestiongroup = new Questiongroup();
-        updatedQuestiongroup.setId(questiongroup.getId());
+        Questiongroup updatedQuestiongroup = questiongroupRepository.findOne(questiongroup.getId());
         updatedQuestiongroup.setTitle(UPDATED_TITLE);
         updatedQuestiongroup.setDescription(UPDATED_DESCRIPTION);
         updatedQuestiongroup.setPosition(UPDATED_POSITION);
@@ -382,7 +390,7 @@ public class QuestiongroupResourceIntTest {
         // Search the questiongroup
         restQuestiongroupMockMvc.perform(get("/api/_search/questiongroups?query=id:" + questiongroup.getId()))
             .andExpect(status().isOk())
-            .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+            .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE))
             .andExpect(jsonPath("$.[*].id").value(hasItem(questiongroup.getId().intValue())))
             .andExpect(jsonPath("$.[*].title").value(hasItem(DEFAULT_TITLE.toString())))
             .andExpect(jsonPath("$.[*].description").value(hasItem(DEFAULT_DESCRIPTION.toString())))

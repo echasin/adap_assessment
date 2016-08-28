@@ -2,6 +2,7 @@ package com.innvo.web.rest;
 
 import com.codahale.metrics.annotation.Timed;
 import com.innvo.domain.Subquestion;
+
 import com.innvo.repository.SubquestionRepository;
 import com.innvo.repository.search.SubquestionSearchRepository;
 import com.innvo.web.rest.util.HeaderUtil;
@@ -38,10 +39,10 @@ public class SubquestionResource {
         
     @Inject
     private SubquestionRepository subquestionRepository;
-    
+
     @Inject
     private SubquestionSearchRepository subquestionSearchRepository;
-    
+
     /**
      * POST  /subquestions : Create a new subquestion.
      *
@@ -104,7 +105,7 @@ public class SubquestionResource {
     public ResponseEntity<List<Subquestion>> getAllSubquestions(Pageable pageable)
         throws URISyntaxException {
         log.debug("REST request to get a page of Subquestions");
-        Page<Subquestion> page = subquestionRepository.findAll(pageable); 
+        Page<Subquestion> page = subquestionRepository.findAll(pageable);
         HttpHeaders headers = PaginationUtil.generatePaginationHttpHeaders(page, "/api/subquestions");
         return new ResponseEntity<>(page.getContent(), headers, HttpStatus.OK);
     }
@@ -150,8 +151,10 @@ public class SubquestionResource {
      * SEARCH  /_search/subquestions?query=:query : search for the subquestion corresponding
      * to the query.
      *
-     * @param query the query of the subquestion search
+     * @param query the query of the subquestion search 
+     * @param pageable the pagination information
      * @return the result of the search
+     * @throws URISyntaxException if there is an error to generate the pagination HTTP headers
      */
     @RequestMapping(value = "/_search/subquestions",
         method = RequestMethod.GET,
@@ -182,4 +185,5 @@ public class SubquestionResource {
         HttpHeaders headers = PaginationUtil.generatePaginationHttpHeaders(page, "/api/subquestions");
         return new ResponseEntity<>(page.getContent(), headers, HttpStatus.OK);
     }
+
 }

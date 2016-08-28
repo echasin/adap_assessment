@@ -10,13 +10,11 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import static org.hamcrest.Matchers.hasItem;
 import org.mockito.MockitoAnnotations;
-import org.springframework.boot.test.IntegrationTest;
-import org.springframework.boot.test.SpringApplicationConfiguration;
+import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
 import org.springframework.data.web.PageableHandlerMethodArgumentResolver;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
-import org.springframework.test.context.web.WebAppConfiguration;
+import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.util.ReflectionTestUtils;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
@@ -24,6 +22,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.PostConstruct;
 import javax.inject.Inject;
+import javax.persistence.EntityManager;
 import java.time.Instant;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
@@ -34,20 +33,15 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
-
 /**
  * Test class for the AnswerResource REST controller.
  *
  * @see AnswerResource
  */
-@RunWith(SpringJUnit4ClassRunner.class)
-@SpringApplicationConfiguration(classes = AdapAssessmentApp.class)
-@WebAppConfiguration
-@IntegrationTest
+@RunWith(SpringRunner.class)
+@SpringBootTest(classes = AdapAssessmentApp.class)
 public class AnswerResourceIntTest {
-
     private static final DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'").withZone(ZoneId.of("Z"));
-
     private static final String DEFAULT_CODE = "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA";
     private static final String UPDATED_CODE = "BBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBB";
     private static final String DEFAULT_ANSWEROPTION = "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA";
@@ -78,6 +72,9 @@ public class AnswerResourceIntTest {
     @Inject
     private PageableHandlerMethodArgumentResolver pageableArgumentResolver;
 
+    @Inject
+    private EntityManager em;
+
     private MockMvc restAnswerMockMvc;
 
     private Answer answer;
@@ -93,9 +90,14 @@ public class AnswerResourceIntTest {
             .setMessageConverters(jacksonMessageConverter).build();
     }
 
-    @Before
-    public void initTest() {
-        answerSearchRepository.deleteAll();
+    /**
+     * Create an entity for this test.
+     *
+     * This is a static method, as tests for other entities might also need it,
+     * if they test an entity which requires the current entity.
+     */
+    public static Answer createEntity(EntityManager em) {
+        Answer answer = new Answer();
         answer = new Answer();
         answer.setCode(DEFAULT_CODE);
         answer.setAnsweroption(DEFAULT_ANSWEROPTION);
@@ -104,6 +106,13 @@ public class AnswerResourceIntTest {
         answer.setLastmodifiedby(DEFAULT_LASTMODIFIEDBY);
         answer.setLastmodifieddatetime(DEFAULT_LASTMODIFIEDDATETIME);
         answer.setDomain(DEFAULT_DOMAIN);
+        return answer;
+    }
+
+    @Before
+    public void initTest() {
+        answerSearchRepository.deleteAll();
+        answer = createEntity(em);
     }
 
     @Test
@@ -270,7 +279,7 @@ public class AnswerResourceIntTest {
         // Get all the answers
         restAnswerMockMvc.perform(get("/api/answers?sort=id,desc"))
                 .andExpect(status().isOk())
-                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE))
                 .andExpect(jsonPath("$.[*].id").value(hasItem(answer.getId().intValue())))
                 .andExpect(jsonPath("$.[*].code").value(hasItem(DEFAULT_CODE.toString())))
                 .andExpect(jsonPath("$.[*].answeroption").value(hasItem(DEFAULT_ANSWEROPTION.toString())))
@@ -290,7 +299,7 @@ public class AnswerResourceIntTest {
         // Get the answer
         restAnswerMockMvc.perform(get("/api/answers/{id}", answer.getId()))
             .andExpect(status().isOk())
-            .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+            .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE))
             .andExpect(jsonPath("$.id").value(answer.getId().intValue()))
             .andExpect(jsonPath("$.code").value(DEFAULT_CODE.toString()))
             .andExpect(jsonPath("$.answeroption").value(DEFAULT_ANSWEROPTION.toString()))
@@ -318,8 +327,7 @@ public class AnswerResourceIntTest {
         int databaseSizeBeforeUpdate = answerRepository.findAll().size();
 
         // Update the answer
-        Answer updatedAnswer = new Answer();
-        updatedAnswer.setId(answer.getId());
+        Answer updatedAnswer = answerRepository.findOne(answer.getId());
         updatedAnswer.setCode(UPDATED_CODE);
         updatedAnswer.setAnsweroption(UPDATED_ANSWEROPTION);
         updatedAnswer.setPosition(UPDATED_POSITION);
@@ -382,7 +390,7 @@ public class AnswerResourceIntTest {
         // Search the answer
         restAnswerMockMvc.perform(get("/api/_search/answers?query=id:" + answer.getId()))
             .andExpect(status().isOk())
-            .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+            .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE))
             .andExpect(jsonPath("$.[*].id").value(hasItem(answer.getId().intValue())))
             .andExpect(jsonPath("$.[*].code").value(hasItem(DEFAULT_CODE.toString())))
             .andExpect(jsonPath("$.[*].answeroption").value(hasItem(DEFAULT_ANSWEROPTION.toString())))

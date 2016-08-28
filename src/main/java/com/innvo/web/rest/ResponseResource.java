@@ -42,7 +42,7 @@ public class ResponseResource {
         
     @Inject
     private ResponseRepository responseRepository;
-    
+
     @Inject
     private ResponseSearchRepository responseSearchRepository;
    
@@ -52,6 +52,7 @@ public class ResponseResource {
     @Inject
     SpringSecurityAuditorAware springSecurityAuditorAware; 
     
+
     /**
      * POST  /responses : Create a new response.
      *
@@ -114,7 +115,7 @@ public class ResponseResource {
     public ResponseEntity<List<Response>> getAllResponses(Pageable pageable)
         throws URISyntaxException {
         log.debug("REST request to get a page of Responses");
-        Page<Response> page = responseRepository.findAll(pageable); 
+        Page<Response> page = responseRepository.findAll(pageable);
         HttpHeaders headers = PaginationUtil.generatePaginationHttpHeaders(page, "/api/responses");
         return new ResponseEntity<>(page.getContent(), headers, HttpStatus.OK);
     }
@@ -160,8 +161,10 @@ public class ResponseResource {
      * SEARCH  /_search/responses?query=:query : search for the response corresponding
      * to the query.
      *
-     * @param query the query of the response search
+     * @param query the query of the response search 
+     * @param pageable the pagination information
      * @return the result of the search
+     * @throws URISyntaxException if there is an error to generate the pagination HTTP headers
      */
     @RequestMapping(value = "/_search/responses",
         method = RequestMethod.GET,
@@ -275,5 +278,4 @@ public class ResponseResource {
         response.setLastmodifieddatetime(newlastmodifieddatetime);
         responseRepository.save(response);
     }
-
 }

@@ -29,6 +29,7 @@ spring:
         livereload:
             enabled: false
     datasource:
+        type: com.zaxxer.hikari.HikariDataSource
         url: jdbc:postgresql://localhost:5432/adap_assessment
         name:
         username: adap_assessment
@@ -36,7 +37,7 @@ spring:
     jpa:
         database-platform: com.innvo.domain.util.FixedPostgreSQL82Dialect
         database: POSTGRESQL
-        show_sql: false
+        show-sql: false
         properties:
             hibernate.cache.use_second_level_cache: true
             hibernate.cache.use_query_cache: false
@@ -109,5 +110,3 @@ jhipster:
         spectator-metrics: # Reports Spectator Circuit Breaker metrics in the logs
             enabled: false
             # edit spring.metrics.export.delay-millis to set report frequency
-    swagger: # swagger is disabled. It can be disabled by pasing 'no-swagger' profile at run time as well
-        enabled: false

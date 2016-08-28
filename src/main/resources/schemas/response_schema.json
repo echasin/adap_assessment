@@ -1,0 +1,101 @@
+{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "type": "object",
+  "properties": {
+    "response.id": {
+      "type": "integer"
+    },
+    "questionnaire.id": {
+      "type": "integer"
+    },
+    "questionnaire.name": {
+      "type": "string"
+    },
+    "questiongroups": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "questiongroup.id": {
+            "type": "integer"
+          },
+          "questiongroup.name": {
+            "type": "string"
+          },
+          "questions": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "questiongroup.id": {
+                  "type": "integer"
+                },
+                "questiongroup.name": {
+                  "type": "string"
+                },
+                "questions": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "question.id": {
+                        "type": "integer"
+                      },
+                      "question.manadatory": {
+                        "type": "string"
+                      },
+                      "question.code": {
+                        "type": "string"
+                      },
+                      "question.position": {
+                        "type": "integer"
+                      },
+                      "question.help": {
+                        "type": "string"
+                      },
+                      "question": {
+                        "type": "string"
+                      },
+                      "question.type": {
+                        "type": "string"
+                      },
+                      "response": {
+                        "type": "string"
+                      }
+                    },
+                    "required": [
+                      "question.id",
+                      "question.manadatory",
+                      "question.code",
+                      "question.position",
+                      "question.help",
+                      "question",
+                      "question.type",
+                      "response"
+                    ]
+                  }
+                }
+              },
+              "required": [
+                "questiongroup.id",
+                "questiongroup.name",
+                "questions"
+              ]
+            }
+          }
+        },
+        "required": [
+          "questiongroup.id",
+          "questiongroup.name",
+          "questions"
+        ]
+      }
+    }
+  },
+  "required": [
+    "response.id",
+    "questionnaire.id",
+    "questionnaire.name",
+    "questiongroups"
+  ]
+}
