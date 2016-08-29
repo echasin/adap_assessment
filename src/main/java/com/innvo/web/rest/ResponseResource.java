@@ -199,6 +199,26 @@ public class ResponseResource {
             .orElse(new ResponseEntity<>(HttpStatus.NOT_FOUND));
     }
     
+    /**
+     * GET  /responses : get the response by user and date.
+     *
+     * @param id the id of the response to retrieve
+     * @return the ResponseEntity with status 200 (OK) and with body the response, or with status 404 (Not Found)
+     */
+    @RequestMapping(value = "/responseByQuestionnaire/{id}",
+        method = RequestMethod.GET,
+        produces = MediaType.APPLICATION_JSON_VALUE)
+    @Timed
+    public ResponseEntity<Response> getResponseByQuestionnaire(@PathVariable Long id) {
+        log.debug("REST request to get Response by user and date");
+        Response response = responseRepository.findByQuestionnaireId(id);
+        return Optional.ofNullable(response)
+            .map(result -> new ResponseEntity<>(
+                result,
+                HttpStatus.OK))
+            .orElse(new ResponseEntity<>(HttpStatus.NOT_FOUND));
+    }
+    
     
     /**
      * GET  /responses : get the response by user And Questionnaire.
@@ -230,7 +250,7 @@ public class ResponseResource {
     		                 @PathVariable("details") String details) {
         log.debug("REST request to save Response : {}", id);
         String login=springSecurityAuditorAware.getCurrentAuditor();
-        Response response = new Response();
+        Response response = responseRepository.findByQuestionnaireId(id);
         Questionnaire questionnaire=questionnaireRepository.getOne(id);
         response.setQuestionnaire(questionnaire);
         response.setDetails(details);

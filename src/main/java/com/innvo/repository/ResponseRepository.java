@@ -23,6 +23,8 @@ public interface ResponseRepository extends JpaRepository<Response,Long> {
 	Response findByusernameAndLastmodifieddatetimeAndQuestionnaireId(String username,ZonedDateTime lastmodifieddatetime,long id);
 
 	List<Response> findByUsernameAndQuestionnaireId(String username,long id);
+	
+	Response findByQuestionnaireId(long id);
 
 }
 
