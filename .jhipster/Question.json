@@ -17,6 +17,13 @@
             "otherEntityName": "subquestion",
             "relationshipType": "one-to-many",
             "otherEntityRelationshipName": "question"
+        },
+        {
+            "relationshipName": "conditions",
+            "otherEntityName": "conditions",
+            "relationshipType": "one-to-one",
+            "ownerSide": false,
+            "otherEntityRelationshipName": "question"
         }
     ],
     "fields": [
@@ -97,6 +104,11 @@
                 "maxlength"
             ],
             "fieldValidateRulesMaxlength": "1000"
+        },
+        {
+            "fieldName": "display",
+            "fieldType": "Boolean",
+            "fieldValidateRules": []
         }
     ],
     "changelogDate": "20160717144825",

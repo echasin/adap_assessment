@@ -250,7 +250,7 @@ public class ResponseResource {
     		                 @PathVariable("details") String details) {
         log.debug("REST request to save Response : {}", id);
         String login=springSecurityAuditorAware.getCurrentAuditor();
-        Response response = responseRepository.findByQuestionnaireId(id);
+        Response response = new Response();
         Questionnaire questionnaire=questionnaireRepository.getOne(id);
         response.setQuestionnaire(questionnaire);
         response.setDetails(details);
@@ -277,23 +277,21 @@ public class ResponseResource {
     @Timed
     public void updateResponse(@PathVariable("id") Long id,
     		                 @PathVariable("details") String details) {
-        log.debug("REST request to save Response : {}", id);
-        String login=springSecurityAuditorAware.getCurrentAuditor();
-        String userName=springSecurityAuditorAware.getCurrentAuditor();
-        ZonedDateTime lastmodifieddatetime=responseRepository.findMaxLastmodifieddatetimeByUsernameAndQuestionnaireId(userName,id);
-        Response response = responseRepository.findByusernameAndLastmodifieddatetimeAndQuestionnaireId(userName, lastmodifieddatetime,id);
-        Questionnaire questionnaire=questionnaireRepository.getOne(id);
-        response.setQuestionnaire(questionnaire);
-        response.setDetails(details);
-        response.setDomain("DEMO");
-        response.setLastmodifiedby("echasin");
-        response.setStatus("Active");
-        response.setUsername(login);
-        Date date=new Date();
-        ZonedDateTime newlastmodifieddatetime = ZonedDateTime.ofInstant(date.toInstant(),
-                ZoneId.systemDefault());
-        response.setLastmodifieddatetime(newlastmodifieddatetime);
-        responseRepository.save(response);
-    }
+    	   log.debug("REST request to save Response : {}", id);
+           String login=springSecurityAuditorAware.getCurrentAuditor();
+           Response response = responseRepository.findByQuestionnaireId(id);
+           Questionnaire questionnaire=questionnaireRepository.getOne(id);
+           response.setQuestionnaire(questionnaire);
+           response.setDetails(details);
+           response.setDomain("DEMO");
+           response.setLastmodifiedby("echasin");
+           response.setStatus("Active");
+           response.setUsername(login);
+           Date date=new Date();
+           ZonedDateTime lastmodifieddatetime = ZonedDateTime.ofInstant(date.toInstant(),
+                   ZoneId.systemDefault());
+           response.setLastmodifieddatetime(lastmodifieddatetime);
+           responseRepository.save(response);
+       }
 
 }

@@ -73,6 +73,9 @@ public class QuestionResourceIntTest {
     private static final String DEFAULT_HELP = "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA";
     private static final String UPDATED_HELP = "BBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBB";
 
+    private static final Boolean DEFAULT_DISPLAY = false;
+    private static final Boolean UPDATED_DISPLAY = true;
+
     @Inject
     private QuestionRepository questionRepository;
 
@@ -114,6 +117,7 @@ public class QuestionResourceIntTest {
         question.setDomain(DEFAULT_DOMAIN);
         question.setType(DEFAULT_TYPE);
         question.setHelp(DEFAULT_HELP);
+        question.setDisplay(DEFAULT_DISPLAY);
     }
 
     @Test
@@ -142,6 +146,7 @@ public class QuestionResourceIntTest {
         assertThat(testQuestion.getDomain()).isEqualTo(DEFAULT_DOMAIN);
         assertThat(testQuestion.getType()).isEqualTo(DEFAULT_TYPE);
         assertThat(testQuestion.getHelp()).isEqualTo(DEFAULT_HELP);
+        assertThat(testQuestion.isDisplay()).isEqualTo(DEFAULT_DISPLAY);
 
         // Validate the Question in ElasticSearch
         Question questionEs = questionSearchRepository.findOne(testQuestion.getId());
@@ -312,7 +317,8 @@ public class QuestionResourceIntTest {
                 .andExpect(jsonPath("$.[*].lastmodifieddatetime").value(hasItem(DEFAULT_LASTMODIFIEDDATETIME_STR)))
                 .andExpect(jsonPath("$.[*].domain").value(hasItem(DEFAULT_DOMAIN.toString())))
                 .andExpect(jsonPath("$.[*].type").value(hasItem(DEFAULT_TYPE.toString())))
-                .andExpect(jsonPath("$.[*].help").value(hasItem(DEFAULT_HELP.toString())));
+                .andExpect(jsonPath("$.[*].help").value(hasItem(DEFAULT_HELP.toString())))
+                .andExpect(jsonPath("$.[*].display").value(hasItem(DEFAULT_DISPLAY.booleanValue())));
     }
 
     @Test
@@ -335,7 +341,8 @@ public class QuestionResourceIntTest {
             .andExpect(jsonPath("$.lastmodifieddatetime").value(DEFAULT_LASTMODIFIEDDATETIME_STR))
             .andExpect(jsonPath("$.domain").value(DEFAULT_DOMAIN.toString()))
             .andExpect(jsonPath("$.type").value(DEFAULT_TYPE.toString()))
-            .andExpect(jsonPath("$.help").value(DEFAULT_HELP.toString()));
+            .andExpect(jsonPath("$.help").value(DEFAULT_HELP.toString()))
+            .andExpect(jsonPath("$.display").value(DEFAULT_DISPLAY.booleanValue()));
     }
 
     @Test
@@ -367,6 +374,7 @@ public class QuestionResourceIntTest {
         updatedQuestion.setDomain(UPDATED_DOMAIN);
         updatedQuestion.setType(UPDATED_TYPE);
         updatedQuestion.setHelp(UPDATED_HELP);
+        updatedQuestion.setDisplay(UPDATED_DISPLAY);
 
         restQuestionMockMvc.perform(put("/api/questions")
                 .contentType(TestUtil.APPLICATION_JSON_UTF8)
@@ -387,6 +395,7 @@ public class QuestionResourceIntTest {
         assertThat(testQuestion.getDomain()).isEqualTo(UPDATED_DOMAIN);
         assertThat(testQuestion.getType()).isEqualTo(UPDATED_TYPE);
         assertThat(testQuestion.getHelp()).isEqualTo(UPDATED_HELP);
+        assertThat(testQuestion.isDisplay()).isEqualTo(UPDATED_DISPLAY);
 
         // Validate the Question in ElasticSearch
         Question questionEs = questionSearchRepository.findOne(testQuestion.getId());
@@ -436,6 +445,7 @@ public class QuestionResourceIntTest {
             .andExpect(jsonPath("$.[*].lastmodifieddatetime").value(hasItem(DEFAULT_LASTMODIFIEDDATETIME_STR)))
             .andExpect(jsonPath("$.[*].domain").value(hasItem(DEFAULT_DOMAIN.toString())))
             .andExpect(jsonPath("$.[*].type").value(hasItem(DEFAULT_TYPE.toString())))
-            .andExpect(jsonPath("$.[*].help").value(hasItem(DEFAULT_HELP.toString())));
+            .andExpect(jsonPath("$.[*].help").value(hasItem(DEFAULT_HELP.toString())))
+            .andExpect(jsonPath("$.[*].display").value(hasItem(DEFAULT_DISPLAY.booleanValue())));
     }
 }

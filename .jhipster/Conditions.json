@@ -1,0 +1,51 @@
+{
+    "relationships": [
+        {
+            "relationshipName": "displayedquestion",
+            "otherEntityName": "question",
+            "relationshipType": "many-to-one",
+            "relationshipValidateRules": [
+                "required"
+            ],
+            "otherEntityField": "question"
+        },
+        {
+            "relationshipName": "question",
+            "otherEntityName": "question",
+            "relationshipType": "one-to-one",
+            "otherEntityField": "question",
+            "ownerSide": true,
+            "otherEntityRelationshipName": "conditions"
+        }
+    ],
+    "fields": [
+        {
+            "fieldName": "action",
+            "fieldType": "String",
+            "fieldValidateRules": [
+                "required"
+            ]
+        },
+        {
+            "fieldName": "operator",
+            "fieldType": "String",
+            "fieldValidateRules": [
+                "required"
+            ]
+        },
+        {
+            "fieldName": "response",
+            "fieldType": "String",
+            "fieldValidateRules": [
+                "required"
+            ]
+        }
+    ],
+    "changelogDate": "20160905093737",
+    "dto": "no",
+    "service": "no",
+    "entityTableName": "conditions",
+    "pagination": "pagination",
+    "microserviceName": "adap_assessment",
+    "searchEngine": "elasticsearch"
+}

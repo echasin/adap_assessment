@@ -72,6 +72,9 @@ public class Question implements Serializable {
     @Column(name = "help", length = 1000)
     private String help;
 
+    @Column(name = "display")
+    private Boolean display;
+
     @ManyToOne
     private Questiongroup questiongroup;
 
@@ -84,6 +87,10 @@ public class Question implements Serializable {
     @JsonIgnore
     @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
     private Set<Subquestion> subquestions = new HashSet<>();
+
+    @OneToOne(mappedBy = "question")
+    @JsonIgnore
+    private Conditions conditions;
 
     public Long getId() {
         return id;
@@ -173,6 +180,14 @@ public class Question implements Serializable {
         this.help = help;
     }
 
+    public Boolean isDisplay() {
+        return display;
+    }
+
+    public void setDisplay(Boolean display) {
+        this.display = display;
+    }
+
     public Questiongroup getQuestiongroup() {
         return questiongroup;
     }
@@ -195,6 +210,14 @@ public class Question implements Serializable {
 
     public void setSubquestions(Set<Subquestion> subquestions) {
         this.subquestions = subquestions;
+    }
+
+    public Conditions getConditions() {
+        return conditions;
+    }
+
+    public void setConditions(Conditions conditions) {
+        this.conditions = conditions;
     }
 
     @Override
@@ -231,6 +254,7 @@ public class Question implements Serializable {
             ", domain='" + domain + "'" +
             ", type='" + type + "'" +
             ", help='" + help + "'" +
+            ", display='" + display + "'" +
             '}';
     }
 }

@@ -7,9 +7,9 @@ import org.slf4j.LoggerFactory
 import scala.concurrent.duration._
 
 /**
- * Performance test for the Question entity.
+ * Performance test for the Conditions entity.
  */
-class QuestionGatlingTest extends Simulation {
+class ConditionsGatlingTest extends Simulation {
 
     val context: LoggerContext = LoggerFactory.getILoggerFactory.asInstanceOf[LoggerContext]
     // Log all HTTP requests
@@ -42,7 +42,7 @@ class QuestionGatlingTest extends Simulation {
         "Authorization" -> "${access_token}"
     )
 
-    val scn = scenario("Test the Question entity")
+    val scn = scenario("Test the Conditions entity")
         .exec(http("First unauthenticated request")
         .get("/api/account")
         .headers(headers_http)
@@ -60,26 +60,26 @@ class QuestionGatlingTest extends Simulation {
         .check(status.is(200)))
         .pause(10)
         .repeat(2) {
-            exec(http("Get all questions")
-            .get("/api/questions")
+            exec(http("Get all conditions")
+            .get("/api/conditions")
             .headers(headers_http_authenticated)
             .check(status.is(200)))
             .pause(10 seconds, 20 seconds)
-            .exec(http("Create new question")
-            .post("/api/questions")
+            .exec(http("Create new conditions")
+            .post("/api/conditions")
             .headers(headers_http_authenticated)
-            .body(StringBody("""{"id":null, "question":"SAMPLE_TEXT", "mandatory":null, "code":"SAMPLE_TEXT", "position":"0", "status":"SAMPLE_TEXT", "lastmodifiedby":"SAMPLE_TEXT", "lastmodifieddatetime":"2020-01-01T00:00:00.000Z", "domain":"SAMPLE_TEXT", "type":"SAMPLE_TEXT", "help":"SAMPLE_TEXT", "display":null}""")).asJSON
+            .body(StringBody("""{"id":null, "action":"SAMPLE_TEXT", "operator":"SAMPLE_TEXT", "response":"SAMPLE_TEXT"}""")).asJSON
             .check(status.is(201))
-            .check(headerRegex("Location", "(.*)").saveAs("new_question_url"))).exitHereIfFailed
+            .check(headerRegex("Location", "(.*)").saveAs("new_conditions_url"))).exitHereIfFailed
             .pause(10)
             .repeat(5) {
-                exec(http("Get created question")
-                .get("${new_question_url}")
+                exec(http("Get created conditions")
+                .get("${new_conditions_url}")
                 .headers(headers_http_authenticated))
                 .pause(10)
             }
-            .exec(http("Delete created question")
-            .delete("${new_question_url}")
+            .exec(http("Delete created conditions")
+            .delete("${new_conditions_url}")
             .headers(headers_http_authenticated))
             .pause(10)
         }

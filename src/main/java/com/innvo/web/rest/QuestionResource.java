@@ -1,7 +1,9 @@
 package com.innvo.web.rest;
 
 import com.codahale.metrics.annotation.Timed;
+import com.innvo.domain.Conditions;
 import com.innvo.domain.Question;
+import com.innvo.repository.ConditionsRepository;
 import com.innvo.repository.QuestionRepository;
 import com.innvo.repository.search.QuestionSearchRepository;
 import com.innvo.web.rest.util.HeaderUtil;
@@ -42,6 +44,8 @@ public class QuestionResource {
     @Inject
     private QuestionSearchRepository questionSearchRepository;
     
+    @Inject
+    private ConditionsRepository conditionsRepository; 
     /**
      * POST  /questions : Create a new question.
      *
@@ -94,6 +98,7 @@ public class QuestionResource {
      * GET  /questions : get all the questions.
      *
      * @param pageable the pagination information
+     * @param filter the filter of the request
      * @return the ResponseEntity with status 200 (OK) and the list of questions in body
      * @throws URISyntaxException if there is an error to generate the pagination HTTP headers
      */
@@ -101,8 +106,15 @@ public class QuestionResource {
         method = RequestMethod.GET,
         produces = MediaType.APPLICATION_JSON_VALUE)
     @Timed
-    public ResponseEntity<List<Question>> getAllQuestions(Pageable pageable)
+    public ResponseEntity<List<Question>> getAllQuestions(Pageable pageable, @RequestParam(required = false) String filter)
         throws URISyntaxException {
+        if ("conditions-is-null".equals(filter)) {
+            log.debug("REST request to get all Questions where conditions is null");
+            return new ResponseEntity<>(StreamSupport
+                .stream(questionRepository.findAll().spliterator(), false)
+                .filter(question -> question.getConditions() == null)
+                .collect(Collectors.toList()), HttpStatus.OK);
+        }
         log.debug("REST request to get a page of Questions");
         Page<Question> page = questionRepository.findAll(pageable); 
         HttpHeaders headers = PaginationUtil.generatePaginationHttpHeaders(page, "/api/questions");
@@ -164,9 +176,7 @@ public class QuestionResource {
         HttpHeaders headers = PaginationUtil.generateSearchPaginationHttpHeaders(query, page, "/api/_search/questions");
         return new ResponseEntity<>(page.getContent(), headers, HttpStatus.OK);
     }
-
     
-
     /**
      * GET  /questions/:id : get questions by question group.
      *
@@ -181,9 +191,36 @@ public class QuestionResource {
     public ResponseEntity<List<Question>> getQuestionByQuestionGroup(@PathVariable Long id,Pageable pageable
     		 ) throws URISyntaxException {
         log.debug("REST request to get Question By Question Group: {}", id);
-        Page<Question> page = questionRepository.findByQuestiongroupId(id,pageable);
+        Page<Question> page = questionRepository.findByQuestiongroupIdAndDisplayTrue(id,pageable);
         HttpHeaders headers = PaginationUtil.generatePaginationHttpHeaders(page, "/api/questions");
         return new ResponseEntity<>(page.getContent(), headers, HttpStatus.OK);
   
+}
+
+
+    /**
+     * PUT  /questions : Updates an existing question.
+     *
+     * @param question the question to update
+     * @return the ResponseEntity with status 200 (OK) and with body the updated question,
+     * or with status 400 (Bad Request) if the question is not valid,
+     * or with status 500 (Internal Server Error) if the question couldnt be updated
+     * @throws URISyntaxException if the Location URI syntax is incorrect
+     */
+    @RequestMapping(value = "/updateQuestion/{id}",
+        method = RequestMethod.GET,
+        produces = MediaType.APPLICATION_JSON_VALUE)
+    @Timed
+    public ResponseEntity<Question> updateDisplayQuestion(@PathVariable long id) throws URISyntaxException {
+        log.debug("REST request to update Question : {}");
+        Conditions conditions=conditionsRepository.findByQuestionId(id);
+        
+        Question question=questionRepository.findOne(conditions.getDisplayedquestion().getId());
+        question.setDisplay(true);
+        Question result = questionRepository.save(question);
+        questionSearchRepository.save(result);
+        return ResponseEntity.ok()
+            .headers(HeaderUtil.createEntityUpdateAlert("question", question.getId().toString()))
+            .body(result);
     }
 }

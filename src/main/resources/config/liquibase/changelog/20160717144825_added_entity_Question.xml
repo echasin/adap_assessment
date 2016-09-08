@@ -61,6 +61,10 @@
                 <constraints nullable="true" />
             </column>
             
+            <column name="display" type="bit">
+                <constraints nullable="true" />
+            </column>
+            
             <column name="questiongroup_id" type="bigint">
                 <constraints nullable="true" />
             </column>
