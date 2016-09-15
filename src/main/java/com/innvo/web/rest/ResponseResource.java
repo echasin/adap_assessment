@@ -190,7 +190,7 @@ public class ResponseResource {
     public ResponseEntity<Response> getResponseByUser(@PathVariable Long id) {
         log.debug("REST request to get Response by user and date");
         String userName=springSecurityAuditorAware.getCurrentAuditor();
-        ZonedDateTime lastmodifieddatetime=responseRepository.findMaxLastmodifieddatetimeByUsernameAndQuestionnaireId(userName,id);
+        ZonedDateTime lastmodifieddatetime=responseRepository.findMaxLastmodifieddatetimeByQuestionnaireId(id);
         Response response = responseRepository.findByusernameAndLastmodifieddatetimeAndQuestionnaireId(userName, lastmodifieddatetime,id);
         return Optional.ofNullable(response)
             .map(result -> new ResponseEntity<>(
@@ -211,7 +211,8 @@ public class ResponseResource {
     @Timed
     public ResponseEntity<Response> getResponseByQuestionnaire(@PathVariable Long id) {
         log.debug("REST request to get Response by user and date");
-        Response response = responseRepository.findByQuestionnaireId(id);
+        ZonedDateTime lastmodifieddatetime=responseRepository.findMaxLastmodifieddatetimeByQuestionnaireId(id);
+        Response response = responseRepository.findByLastmodifieddatetimeAndQuestionnaireId(lastmodifieddatetime,id);
         return Optional.ofNullable(response)
             .map(result -> new ResponseEntity<>(
                 result,
@@ -279,7 +280,8 @@ public class ResponseResource {
     		                 @PathVariable("details") String details) {
     	   log.debug("REST request to save Response : {}", id);
            String login=springSecurityAuditorAware.getCurrentAuditor();
-           Response response = responseRepository.findByQuestionnaireId(id);
+           ZonedDateTime lastmodifieddate=responseRepository.findMaxLastmodifieddatetimeByQuestionnaireId(id);
+           Response response = responseRepository.findByLastmodifieddatetimeAndQuestionnaireId(lastmodifieddate,id);
            Questionnaire questionnaire=questionnaireRepository.getOne(id);
            response.setQuestionnaire(questionnaire);
            response.setDetails(details);
