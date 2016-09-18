@@ -14,5 +14,6 @@ import java.util.List;
 @SuppressWarnings("unused")
 public interface QuestionRepository extends JpaRepository<Question,Long> {
 
-	Page<Question> findByQuestiongroupIdAndDisplayTrue(long id,Pageable pageable);
+	 	Question findByQuestiongroupIdAndId(long groupId,long questionId);
+	 	
 }

@@ -72,9 +72,6 @@ public class Question implements Serializable {
     @Column(name = "help", length = 1000)
     private String help;
 
-    @Column(name = "display")
-    private Boolean display;
-
     @ManyToOne
     private Questiongroup questiongroup;
 
@@ -180,14 +177,6 @@ public class Question implements Serializable {
         this.help = help;
     }
 
-    public Boolean isDisplay() {
-        return display;
-    }
-
-    public void setDisplay(Boolean display) {
-        this.display = display;
-    }
-
     public Questiongroup getQuestiongroup() {
         return questiongroup;
     }
@@ -254,7 +243,6 @@ public class Question implements Serializable {
             ", domain='" + domain + "'" +
             ", type='" + type + "'" +
             ", help='" + help + "'" +
-            ", display='" + display + "'" +
             '}';
     }
 }

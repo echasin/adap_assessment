@@ -22,6 +22,7 @@ import javax.inject.Inject;
 import javax.validation.Valid;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -191,36 +192,13 @@ public class QuestionResource {
     public ResponseEntity<List<Question>> getQuestionByQuestionGroup(@PathVariable Long id,Pageable pageable
     		 ) throws URISyntaxException {
         log.debug("REST request to get Question By Question Group: {}", id);
-        Page<Question> page = questionRepository.findByQuestiongroupIdAndDisplayTrue(id,pageable);
-        HttpHeaders headers = PaginationUtil.generatePaginationHttpHeaders(page, "/api/questions");
-        return new ResponseEntity<>(page.getContent(), headers, HttpStatus.OK);
-  
-}
+           List<Question> questions = new ArrayList<Question>();
+           List<Conditions> conditions=conditionsRepository.findAll();
+                for(Conditions condition:conditions){
+                	Question question=questionRepository.findByQuestiongroupIdAndId(id,condition.getQuestion().getId());
+                	questions.add(question);
+                }
+             return new ResponseEntity<>(questions, HttpStatus.OK);
+   }
 
-
-    /**
-     * PUT  /questions : Updates an existing question.
-     *
-     * @param question the question to update
-     * @return the ResponseEntity with status 200 (OK) and with body the updated question,
-     * or with status 400 (Bad Request) if the question is not valid,
-     * or with status 500 (Internal Server Error) if the question couldnt be updated
-     * @throws URISyntaxException if the Location URI syntax is incorrect
-     */
-    @RequestMapping(value = "/updateQuestion/{id}",
-        method = RequestMethod.GET,
-        produces = MediaType.APPLICATION_JSON_VALUE)
-    @Timed
-    public ResponseEntity<Question> updateDisplayQuestion(@PathVariable long id) throws URISyntaxException {
-        log.debug("REST request to update Question : {}");
-        Conditions conditions=conditionsRepository.findByQuestionId(id);
-        
-        Question question=questionRepository.findOne(conditions.getDisplayedquestion().getId());
-        question.setDisplay(true);
-        Question result = questionRepository.save(question);
-        questionSearchRepository.save(result);
-        return ResponseEntity.ok()
-            .headers(HeaderUtil.createEntityUpdateAlert("question", question.getId().toString()))
-            .body(result);
-    }
 }
