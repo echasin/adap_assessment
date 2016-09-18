@@ -174,70 +174,7 @@ public class ResponseResource {
         HttpHeaders headers = PaginationUtil.generateSearchPaginationHttpHeaders(query, page, "/api/_search/responses");
         return new ResponseEntity<>(page.getContent(), headers, HttpStatus.OK);
     }
-
-    
-    
-    /**
-     * GET  /responses : get the response by user and date.
-     *
-     * @param id the id of the response to retrieve
-     * @return the ResponseEntity with status 200 (OK) and with body the response, or with status 404 (Not Found)
-     */
-    @RequestMapping(value = "/responseByUserAndDateAndQuestionnaire/{id}",
-        method = RequestMethod.GET,
-        produces = MediaType.APPLICATION_JSON_VALUE)
-    @Timed
-    public ResponseEntity<Response> getResponseByUser(@PathVariable Long id) {
-        log.debug("REST request to get Response by user and date");
-        String userName=springSecurityAuditorAware.getCurrentAuditor();
-        ZonedDateTime lastmodifieddatetime=responseRepository.findMaxLastmodifieddatetimeByQuestionnaireId(id);
-        Response response = responseRepository.findByusernameAndLastmodifieddatetimeAndQuestionnaireId(userName, lastmodifieddatetime,id);
-        return Optional.ofNullable(response)
-            .map(result -> new ResponseEntity<>(
-                result,
-                HttpStatus.OK))
-            .orElse(new ResponseEntity<>(HttpStatus.NOT_FOUND));
-    }
-    
-    /**
-     * GET  /responses : get the response by user and date.
-     *
-     * @param id the id of the response to retrieve
-     * @return the ResponseEntity with status 200 (OK) and with body the response, or with status 404 (Not Found)
-     */
-    @RequestMapping(value = "/responseByQuestionnaire/{id}",
-        method = RequestMethod.GET,
-        produces = MediaType.APPLICATION_JSON_VALUE)
-    @Timed
-    public ResponseEntity<Response> getResponseByQuestionnaire(@PathVariable Long id) {
-        log.debug("REST request to get Response by user and date");
-        ZonedDateTime lastmodifieddatetime=responseRepository.findMaxLastmodifieddatetimeByQuestionnaireId(id);
-        Response response = responseRepository.findByLastmodifieddatetimeAndQuestionnaireId(lastmodifieddatetime,id);
-        return Optional.ofNullable(response)
-            .map(result -> new ResponseEntity<>(
-                result,
-                HttpStatus.OK))
-            .orElse(new ResponseEntity<>(HttpStatus.NOT_FOUND));
-    }
-    
-    
-    /**
-     * GET  /responses : get the response by user And Questionnaire.
-     *
-     * @param id the id of the response to retrieve
-     * @return the ResponseEntity with status 200 (OK) and with body the response, or with status 404 (Not Found)
-     */
-    @RequestMapping(value = "/responseByUserAndQuestionnaire/{id}",
-        method = RequestMethod.GET,
-        produces = MediaType.APPLICATION_JSON_VALUE)
-    @Timed
-    public List<Response> getResponseByUserAndQuestionnaire(@PathVariable("id") Long id) {
-        log.debug("REST request to get Response by user and date");
-        String userName=springSecurityAuditorAware.getCurrentAuditor();
-        List<Response> response = responseRepository.findByUsernameAndQuestionnaireId(userName, id);
-        return response;
-    }
-    
+  
     /**
      * GET  /save response
      *
