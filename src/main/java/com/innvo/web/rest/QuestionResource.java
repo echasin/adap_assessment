@@ -169,7 +169,7 @@ public class QuestionResource {
      *
      * @param query the query of the question search
      * @return the result of the search
-     */
+     **/
     @RequestMapping(value = "/_search/questions",
         method = RequestMethod.GET,
         produces = MediaType.APPLICATION_JSON_VALUE)
