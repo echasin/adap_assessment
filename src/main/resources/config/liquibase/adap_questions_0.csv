@@ -1,6 +1,6 @@
 id,question,mandatory,code,position,status,lastmodifiedby,lastmodifieddatetime,domain,type,help,questiongroup_id
 1001,What is our evaluation of the Jhipster 3.x Application.,TRUE,Q1,1,Active,echasin,2016-07-17 00:00:00,DEMO,5 Point Choice,Please used the following  scoring system  Score of 1 -  Dont Like Score of 3  - See Some Value Score of 5  -  Great Tool,1000
-1002,A Array Question Type uses Subquestions (Rows) and Answer Options (Columns),TRUE,Q2,2,Active,echasin,2016-07-17 00:00:00,DEMO,Array,For each Subquestion (Row) select the best Aswer (Column),null,1000
+1002,A Array Question Type uses Subquestions (Rows) and Answer Options (Columns),TRUE,Q2,2,Active,echasin,2016-07-17 00:00:00,DEMO,Array,For each Subquestion (Row) select the best Aswer (Column),1000
 1003,What is our evaluation of the Jhipster 3.x Application.,TRUE,Q1,1,Active,echasin,2016-07-17 00:00:00,DEMO,5 Point Choice,Please used the following  scoring system  Score of 1 -  Dont Like Score of 3  - See Some Value Score of 5  -  Great Tool,1101
 1004,A Array Question Type uses Subquestions (Rows) and Answer Options (Columns),TRUE,Q2,2,Active,echasin,2016-07-17 00:00:00,DEMO,Array,For each Subquestion (Row) select the best Aswer (Column),1101
 1005,Check that all that apply,TRUE,Q1,1,Active,echasin,2016-07-17 00:00:00,DEMO,Multiple choice with Comments,This is a mulitple Options Question with comments.,1102
