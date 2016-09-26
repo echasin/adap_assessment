@@ -8,6 +8,10 @@ import com.innvo.repository.QuestionRepository;
 import com.innvo.repository.search.QuestionSearchRepository;
 import com.innvo.web.rest.util.HeaderUtil;
 import com.innvo.web.rest.util.PaginationUtil;
+
+import scala.collection.concurrent.CNode;
+
+import org.boon.core.Sys;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
@@ -192,13 +196,29 @@ public class QuestionResource {
     public ResponseEntity<List<Question>> getQuestionByQuestionGroup(@PathVariable Long id,Pageable pageable
     		 ) throws URISyntaxException {
         log.debug("REST request to get Question By Question Group: {}", id);
-           List<Question> questions = new ArrayList<Question>();
-           List<Conditions> conditions=conditionsRepository.findAll();
-                for(Conditions condition:conditions){
-                	Question question=questionRepository.findByQuestiongroupIdAndId(id,condition.getQuestion().getId());
-                	questions.add(question);
-                }
-             return new ResponseEntity<>(questions, HttpStatus.OK);
+         	List<Question> questions=questionRepository.findByQuestiongroupId(id);
+         	return new ResponseEntity<>(questions, HttpStatus.OK);
    }
+    
+
+    @RequestMapping(value = "/questionsByQuestionGroupAndQuestionId/{id}",
+        method = RequestMethod.GET,
+        produces = MediaType.APPLICATION_JSON_VALUE)
+    @Timed
+    public ResponseEntity<List<Question>> questionsByQuestionGroupAndQuestionId(@PathVariable("id") Long id,Pageable pageable
+    		 ) throws URISyntaxException {
+        log.debug("REST request to get Question By Question Group: {}", id);
+        List<Question> questions=questionRepository.findByQuestiongroupId(id);        
+        List<Conditions> conditions=conditionsRepository.findAll();
+        for(Conditions condition:conditions){
+         Question question=questionRepository.findByQuestiongroupIdAndId(id,condition.getDisplayedquestion().getId());
+          if(question!=null){
+            questions.remove(question);
+          }
+        }
+        return new ResponseEntity<>(questions, HttpStatus.OK);
+   }
+    
+    
 
 }

@@ -14,6 +14,8 @@ import java.util.List;
 @SuppressWarnings("unused")
 public interface QuestionRepository extends JpaRepository<Question,Long> {
 
-	 	Question findByQuestiongroupIdAndId(long groupId,long questionId);
-	 	
+	    Question  findByQuestiongroupIdAndId(long groupId,long questionId);
+
+	 	List<Question> findByQuestiongroupId(long groupId);
+
 }
