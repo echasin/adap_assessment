@@ -209,16 +209,16 @@ public class ResponseResource {
      *
      * @param id the id of the questionnaire
      */
-    @RequestMapping(value = "/updateResponse/{id}/{details}",
+    @RequestMapping(value = "/updateResponse/{id}/{rId}/{details}",
         method = RequestMethod.GET,
         produces = MediaType.APPLICATION_JSON_VALUE)
     @Timed
     public void updateResponse(@PathVariable("id") Long id,
-    		                 @PathVariable("details") String details) {
+    		                   @PathVariable("rId") Long rId,
+    		                   @PathVariable("details") String details) {
     	   log.debug("REST request to save Response : {}", id);
            String login=springSecurityAuditorAware.getCurrentAuditor();
-           ZonedDateTime lastmodifieddate=responseRepository.findMaxLastmodifieddatetimeByQuestionnaireId(id);
-           Response response = responseRepository.findByLastmodifieddatetimeAndQuestionnaireId(lastmodifieddate,id);
+           Response response = responseRepository.findOne(rId);
            Questionnaire questionnaire=questionnaireRepository.getOne(id);
            response.setQuestionnaire(questionnaire);
            response.setDetails(details);
