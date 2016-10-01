@@ -183,7 +183,7 @@ public class ConditionsResource {
             .map(result -> new ResponseEntity<>(
                 result,
                 HttpStatus.OK))
-            .orElse(new ResponseEntity<>(HttpStatus.NOT_FOUND));
+            .orElse(new ResponseEntity<>(HttpStatus.OK));
     }
     
 }

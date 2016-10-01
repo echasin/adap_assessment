@@ -1,0 +1,37 @@
+{
+    "relationships": [],
+    "fields": [
+        {
+            "fieldName": "responseId",
+            "fieldType": "Long",
+            "fieldValidateRules": []
+        },
+        {
+            "fieldName": "questionnaireId",
+            "fieldType": "Long"
+        },
+        {
+            "fieldName": "questiongroupId",
+            "fieldType": "Long"
+        },
+        {
+            "fieldName": "questionId",
+            "fieldType": "Long"
+        },
+        {
+            "fieldName": "subquestionId",
+            "fieldType": "Long"
+        },
+        {
+            "fieldName": "response",
+            "fieldType": "String"
+        }
+    ],
+    "changelogDate": "20161001141124",
+    "dto": "no",
+    "service": "no",
+    "entityTableName": "responsedetail",
+    "pagination": "pagination",
+    "microserviceName": "adap_assessment",
+    "searchEngine": "elasticsearch"
+}

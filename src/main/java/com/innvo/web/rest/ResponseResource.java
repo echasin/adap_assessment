@@ -1,14 +1,26 @@
 package com.innvo.web.rest;
 
 import com.codahale.metrics.annotation.Timed;
+import com.fasterxml.jackson.core.JsonParseException;
+import com.fasterxml.jackson.databind.JsonMappingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.innvo.domain.Questionnaire;
 import com.innvo.domain.Response;
+import com.innvo.domain.Responsedetail;
 import com.innvo.repository.QuestionnaireRepository;
 import com.innvo.repository.ResponseRepository;
+import com.innvo.repository.ResponsedetailRepository;
 import com.innvo.repository.search.ResponseSearchRepository;
 import com.innvo.security.SpringSecurityAuditorAware;
+import com.innvo.web.rest.dto.Question;
+import com.innvo.web.rest.dto.Questiongroup;
+import com.innvo.web.rest.dto.ResponsedetailJson;
 import com.innvo.web.rest.util.HeaderUtil;
 import com.innvo.web.rest.util.PaginationUtil;
+
+import org.boon.core.Sys;
+import org.json.JSONException;
+import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
@@ -21,12 +33,15 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.inject.Inject;
 import javax.validation.Valid;
+
+import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 import static org.elasticsearch.index.query.QueryBuilders.*;
@@ -51,6 +66,7 @@ public class ResponseResource {
    
     @Inject
     SpringSecurityAuditorAware springSecurityAuditorAware; 
+    
     
     /**
      * POST  /responses : Create a new response.
@@ -124,14 +140,18 @@ public class ResponseResource {
      *
      * @param id the id of the response to retrieve
      * @return the ResponseEntity with status 200 (OK) and with body the response, or with status 404 (Not Found)
+     * @throws IOException 
+     * @throws JsonMappingException 
+     * @throws JsonParseException 
+     * @throws JSONException 
      */
     @RequestMapping(value = "/responses/{id}",
         method = RequestMethod.GET,
         produces = MediaType.APPLICATION_JSON_VALUE)
     @Timed
-    public ResponseEntity<Response> getResponse(@PathVariable Long id) {
+    public ResponseEntity<Response> getResponse(@PathVariable Long id) throws JsonParseException, JsonMappingException, IOException, JSONException {
         log.debug("REST request to get Response : {}", id);
-        Response response = responseRepository.findOne(id);
+        Response response = responseRepository.findOne(id);   
         return Optional.ofNullable(response)
             .map(result -> new ResponseEntity<>(
                 result,
