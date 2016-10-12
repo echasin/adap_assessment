@@ -165,25 +165,42 @@ public class ConditionsResource {
         return new ResponseEntity<>(page.getContent(), headers, HttpStatus.OK);
     }
 
-
     /**
-     * GET  /conditions/:id : get the "id" conditions.
-     *
-     * @param id the id of the conditions to retrieve
-     * @return the ResponseEntity with status 200 (OK) and with body the conditions, or with status 404 (Not Found)
+     * 
+     * @param id
+     * @return
      */
     @RequestMapping(value = "/conditionByQuestion/{id}",
-        method = RequestMethod.GET,
-        produces = MediaType.APPLICATION_JSON_VALUE)
-    @Timed
-    public ResponseEntity<Conditions> getConditionByquestion(@PathVariable Long id) {
-        log.debug("REST request to get Conditions : {}", id);
-        Conditions conditions=conditionsRepository.findByQuestionId(id);
-        return Optional.ofNullable(conditions)
-            .map(result -> new ResponseEntity<>(
-                result,
-                HttpStatus.OK))
-            .orElse(new ResponseEntity<>(HttpStatus.OK));
+            method = RequestMethod.GET,
+            produces = MediaType.APPLICATION_JSON_VALUE)
+        @Timed
+        public ResponseEntity<Conditions> getConditionByquestion(@PathVariable Long id) {
+            log.debug("REST request to get Conditions : {}", id);
+            Conditions conditions=conditionsRepository.findByQuestionId(id);
+            return Optional.ofNullable(conditions)
+                .map(result -> new ResponseEntity<>(
+                    result,
+                    HttpStatus.OK))
+                .orElse(new ResponseEntity<>(HttpStatus.OK));
     }
     
+    /**
+     * 
+     * @param id
+     * @return
+     */
+    @RequestMapping(value = "/conditionBySubquestion/{id}",
+            method = RequestMethod.GET,
+            produces = MediaType.APPLICATION_JSON_VALUE)
+        @Timed
+        public ResponseEntity<Conditions> getConditionBySubquestion(@PathVariable Long id) {
+            log.debug("REST request to get Conditions : {}", id);
+            Conditions conditions=conditionsRepository.findBySubquestionId(id);
+            return Optional.ofNullable(conditions)
+                .map(result -> new ResponseEntity<>(
+                    result,
+                    HttpStatus.OK))
+                .orElse(new ResponseEntity<>(HttpStatus.OK));
+    }
+
 }

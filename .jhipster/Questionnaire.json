@@ -5,6 +5,12 @@
             "otherEntityName": "questiongroup",
             "relationshipType": "one-to-many",
             "otherEntityRelationshipName": "questionnaire"
+        },
+        {
+            "relationshipName": "conditions",
+            "otherEntityName": "conditions",
+            "relationshipType": "one-to-many",
+            "otherEntityRelationshipName": "questionnaire"
         }
     ],
     "fields": [
@@ -16,7 +22,7 @@
             ],
             "fieldValidateRulesMaxlength": "100"
         },
-		{
+        {
             "fieldName": "status",
             "fieldType": "String",
             "fieldValidateRules": [

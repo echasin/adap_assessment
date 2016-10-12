@@ -46,7 +46,11 @@
         <loadData encoding="UTF-8"
                   file="config/liquibase/adap_conditions_0.csv"
                   separator=","
-                  tableName="conditions"/>           		  
+                  tableName="conditions"/> 
+        <loadData encoding="UTF-8"
+                  file="config/liquibase/adap_logicoperator_1.csv"
+                  separator=","
+                  tableName="logicoperator"/>                     		  
          
     </changeSet>
 </databaseChangeLog>
