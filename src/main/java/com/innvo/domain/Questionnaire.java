@@ -56,6 +56,11 @@ public class Questionnaire implements Serializable {
     @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
     private Set<Questiongroup> questiongroups = new HashSet<>();
 
+    @OneToMany(mappedBy = "questionnaire")
+    @JsonIgnore
+    @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
+    private Set<Conditions> conditions = new HashSet<>();
+
     public Long getId() {
         return id;
     }
@@ -110,6 +115,14 @@ public class Questionnaire implements Serializable {
 
     public void setQuestiongroups(Set<Questiongroup> questiongroups) {
         this.questiongroups = questiongroups;
+    }
+
+    public Set<Conditions> getConditions() {
+        return conditions;
+    }
+
+    public void setConditions(Set<Conditions> conditions) {
+        this.conditions = conditions;
     }
 
     @Override

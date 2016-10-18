@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<databaseChangeLog
+    xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.4.xsd">
+    <!--
+        Added the constraints for entity Logicoperator.
+    -->
+    <changeSet id="20161004120041-2" author="jhipster">
+        
+        <addForeignKeyConstraint baseColumnNames="firstquestion_id"
+                                 baseTableName="logicoperator"
+                                 constraintName="fk_logicoperator_firstquestion_id"
+                                 referencedColumnNames="id"
+                                 referencedTableName="question"/>
+
+        <addForeignKeyConstraint baseColumnNames="secondquestion_id"
+                                 baseTableName="logicoperator"
+                                 constraintName="fk_logicoperator_secondquestion_id"
+                                 referencedColumnNames="id"
+                                 referencedTableName="question"/>
+
+        <addForeignKeyConstraint baseColumnNames="questionnaire_id"
+                                 baseTableName="logicoperator"
+                                 constraintName="fk_logicoperator_questionnaire_id"
+                                 referencedColumnNames="id"
+                                 referencedTableName="questionnaire"/>
+
+        <addForeignKeyConstraint baseColumnNames="firstsubquestion_id"
+                                 baseTableName="logicoperator"
+                                 constraintName="fk_logicoperator_firstsubquestion_id"
+                                 referencedColumnNames="id"
+                                 referencedTableName="subquestion"/>
+
+        <addForeignKeyConstraint baseColumnNames="secondsubquestion_id"
+                                 baseTableName="logicoperator"
+                                 constraintName="fk_logicoperator_secondsubquestion_id"
+                                 referencedColumnNames="id"
+                                 referencedTableName="subquestion"/>
+
+    </changeSet>
+</databaseChangeLog>

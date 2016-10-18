@@ -1,0 +1,51 @@
+{
+    "relationships": [
+        {
+            "relationshipName": "firstquestion",
+            "otherEntityName": "question",
+            "relationshipType": "one-to-one",
+            "otherEntityField": "id",
+            "ownerSide": true,
+            "otherEntityRelationshipName": "logicoperator"
+        },
+        {
+            "relationshipName": "secondquestion",
+            "otherEntityName": "question",
+            "relationshipType": "one-to-one",
+            "otherEntityField": "id",
+            "ownerSide": true,
+            "otherEntityRelationshipName": "logicoperator"
+        },
+        {
+            "relationshipName": "questionnaire",
+            "otherEntityName": "questionnaire",
+            "relationshipType": "many-to-one",
+            "otherEntityField": "id"
+        },
+        {
+            "relationshipName": "firstsubquestion",
+            "otherEntityName": "subquestion",
+            "relationshipType": "many-to-one",
+            "otherEntityField": "subquestion"
+        },
+        {
+            "relationshipName": "secondsubquestion",
+            "otherEntityName": "subquestion",
+            "relationshipType": "many-to-one",
+            "otherEntityField": "subquestion"
+        }
+    ],
+    "fields": [
+        {
+            "fieldName": "operator",
+            "fieldType": "String"
+        }
+    ],
+    "changelogDate": "20161004120041",
+    "dto": "no",
+    "service": "no",
+    "entityTableName": "logicoperator",
+    "pagination": "pagination",
+    "microserviceName": "adap_assessment",
+    "searchEngine": "elasticsearch"
+}

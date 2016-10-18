@@ -14,36 +14,31 @@
     <property name="floatType" value="float" dbms="mysql, oracle"/>
 
     <!--
-        Added the entity Conditions.
+        Added the entity Logicoperator.
     -->
-    <changeSet id="20160905093737-1" author="jhipster">
-        <createTable tableName="conditions">
+    <changeSet id="20161004120041-1" author="jhipster">
+        <createTable tableName="logicoperator">
             <column name="id" type="bigint" autoIncrement="${autoIncrement}">
                 <constraints primaryKey="true" nullable="false"/>
             </column>
-            <column name="action" type="varchar(255)">
-                <constraints nullable="false" />
-            </column>
-            
             <column name="operator" type="varchar(255)">
-                <constraints nullable="false" />
+                <constraints nullable="true" />
             </column>
-            
-            <column name="response" type="varchar(255)">
-                <constraints nullable="false" />
-            </column>
-            
-            <column name="displayedquestion_id" type="bigint">
-                <constraints nullable="false" />
-            </column>
-            <column name="question_id" type="bigint">
+            <column name="firstquestion_id" type="bigint">
+                <constraints unique="true" nullable="true" />
+            </column>        
+            <column name="secondquestion_id" type="bigint">
                 <constraints unique="true" nullable="true" />
             </column>
             <column name="questionnaire_id" type="bigint">
                 <constraints nullable="true" />
             </column>
 
-            <column name="subquestion_id" type="bigint">
+            <column name="firstsubquestion_id" type="bigint">
+                <constraints nullable="true" />
+            </column>
+
+            <column name="secondsubquestion_id" type="bigint">
                 <constraints nullable="true" />
             </column>
 

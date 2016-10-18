@@ -1,0 +1,5 @@
+id, operator, firstquestion_id, secondquestion_id, firstsubquestion_id,secondsubquestion_id, questionnaire_id
+1000,"OR","1003",null,null,1003,1000
+1001,"OR",null,null,1003,1004,1000
+1002,"AND",3001,null,null,3001,3000
+

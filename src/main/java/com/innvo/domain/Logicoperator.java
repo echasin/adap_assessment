@@ -5,18 +5,17 @@ import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.springframework.data.elasticsearch.annotations.Document;
 
 import javax.persistence.*;
-import javax.validation.constraints.*;
 import java.io.Serializable;
 import java.util.Objects;
 
 /**
- * A Conditions.
+ * A Logicoperator.
  */
 @Entity
-@Table(name = "conditions")
+@Table(name = "logicoperator")
 @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
-@Document(indexName = "conditions")
-public class Conditions implements Serializable {
+@Document(indexName = "logicoperator")
+public class Logicoperator implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
@@ -24,31 +23,25 @@ public class Conditions implements Serializable {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
 
-    @NotNull
-    @Column(name = "action", nullable = false)
-    private String action;
-
-    @NotNull
-    @Column(name = "operator", nullable = false)
+    @Column(name = "operator")
     private String operator;
-
-    @NotNull
-    @Column(name = "response", nullable = false)
-    private String response;
-
-    @ManyToOne
-    @NotNull
-    private Question displayedquestion;
 
     @OneToOne
     @JoinColumn(unique = true)
-    private Question question;
+    private Question firstquestion;
+
+    @OneToOne
+    @JoinColumn(unique = true)
+    private Question secondquestion;
 
     @ManyToOne
     private Questionnaire questionnaire;
 
     @ManyToOne
-    private Subquestion subquestion;
+    private Subquestion firstsubquestion;
+
+    @ManyToOne
+    private Subquestion secondsubquestion;
 
     public Long getId() {
         return id;
@@ -56,14 +49,6 @@ public class Conditions implements Serializable {
 
     public void setId(Long id) {
         this.id = id;
-    }
-
-    public String getAction() {
-        return action;
-    }
-
-    public void setAction(String action) {
-        this.action = action;
     }
 
     public String getOperator() {
@@ -74,28 +59,20 @@ public class Conditions implements Serializable {
         this.operator = operator;
     }
 
-    public String getResponse() {
-        return response;
+    public Question getFirstquestion() {
+        return firstquestion;
     }
 
-    public void setResponse(String response) {
-        this.response = response;
+    public void setFirstquestion(Question question) {
+        this.firstquestion = question;
     }
 
-    public Question getDisplayedquestion() {
-        return displayedquestion;
+    public Question getSecondquestion() {
+        return secondquestion;
     }
 
-    public void setDisplayedquestion(Question question) {
-        this.displayedquestion = question;
-    }
-
-    public Question getQuestion() {
-        return question;
-    }
-
-    public void setQuestion(Question question) {
-        this.question = question;
+    public void setSecondquestion(Question question) {
+        this.secondquestion = question;
     }
 
     public Questionnaire getQuestionnaire() {
@@ -106,12 +83,20 @@ public class Conditions implements Serializable {
         this.questionnaire = questionnaire;
     }
 
-    public Subquestion getSubquestion() {
-        return subquestion;
+    public Subquestion getFirstsubquestion() {
+        return firstsubquestion;
     }
 
-    public void setSubquestion(Subquestion subquestion) {
-        this.subquestion = subquestion;
+    public void setFirstsubquestion(Subquestion subquestion) {
+        this.firstsubquestion = subquestion;
+    }
+
+    public Subquestion getSecondsubquestion() {
+        return secondsubquestion;
+    }
+
+    public void setSecondsubquestion(Subquestion subquestion) {
+        this.secondsubquestion = subquestion;
     }
 
     @Override
@@ -122,11 +107,11 @@ public class Conditions implements Serializable {
         if (o == null || getClass() != o.getClass()) {
             return false;
         }
-        Conditions conditions = (Conditions) o;
-        if(conditions.id == null || id == null) {
+        Logicoperator logicoperator = (Logicoperator) o;
+        if(logicoperator.id == null || id == null) {
             return false;
         }
-        return Objects.equals(id, conditions.id);
+        return Objects.equals(id, logicoperator.id);
     }
 
     @Override
@@ -136,11 +121,9 @@ public class Conditions implements Serializable {
 
     @Override
     public String toString() {
-        return "Conditions{" +
+        return "Logicoperator{" +
             "id=" + id +
-            ", action='" + action + "'" +
             ", operator='" + operator + "'" +
-            ", response='" + response + "'" +
             '}';
     }
 }

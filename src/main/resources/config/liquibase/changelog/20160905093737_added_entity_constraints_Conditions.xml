@@ -20,5 +20,17 @@
                                  referencedColumnNames="id"
                                  referencedTableName="question"/>
 
+        <addForeignKeyConstraint baseColumnNames="questionnaire_id"
+                                 baseTableName="conditions"
+                                 constraintName="fk_conditions_questionnaire_id"
+                                 referencedColumnNames="id"
+                                 referencedTableName="questionnaire"/>
+
+        <addForeignKeyConstraint baseColumnNames="subquestion_id"
+                                 baseTableName="conditions"
+                                 constraintName="fk_conditions_subquestion_id"
+                                 referencedColumnNames="id"
+                                 referencedTableName="subquestion"/>
+
     </changeSet>
 </databaseChangeLog>

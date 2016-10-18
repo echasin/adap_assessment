@@ -16,6 +16,18 @@
             "otherEntityField": "question",
             "ownerSide": true,
             "otherEntityRelationshipName": "conditions"
+        },
+        {
+            "relationshipName": "questionnaire",
+            "otherEntityName": "questionnaire",
+            "relationshipType": "many-to-one",
+            "otherEntityField": "title"
+        },
+        {
+            "relationshipName": "subquestion",
+            "otherEntityName": "subquestion",
+            "relationshipType": "many-to-one",
+            "otherEntityField": "subquestion"
         }
     ],
     "fields": [

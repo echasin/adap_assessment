@@ -14,39 +14,37 @@
     <property name="floatType" value="float" dbms="mysql, oracle"/>
 
     <!--
-        Added the entity Conditions.
+        Added the entity Responsedetail.
     -->
-    <changeSet id="20160905093737-1" author="jhipster">
-        <createTable tableName="conditions">
+    <changeSet id="20161001141124-1" author="jhipster">
+        <createTable tableName="responsedetail">
             <column name="id" type="bigint" autoIncrement="${autoIncrement}">
                 <constraints primaryKey="true" nullable="false"/>
             </column>
-            <column name="action" type="varchar(255)">
-                <constraints nullable="false" />
+            <column name="response_id" type="bigint">
+                <constraints nullable="true" />
             </column>
             
-            <column name="operator" type="varchar(255)">
-                <constraints nullable="false" />
-            </column>
-            
-            <column name="response" type="varchar(255)">
-                <constraints nullable="false" />
-            </column>
-            
-            <column name="displayedquestion_id" type="bigint">
-                <constraints nullable="false" />
-            </column>
-            <column name="question_id" type="bigint">
-                <constraints unique="true" nullable="true" />
-            </column>
             <column name="questionnaire_id" type="bigint">
                 <constraints nullable="true" />
             </column>
-
+            
+            <column name="questiongroup_id" type="bigint">
+                <constraints nullable="true" />
+            </column>
+            
+            <column name="question_id" type="bigint">
+                <constraints nullable="true" />
+            </column>
+            
             <column name="subquestion_id" type="bigint">
                 <constraints nullable="true" />
             </column>
-
+            
+            <column name="response" type="varchar(255)">
+                <constraints nullable="true" />
+            </column>
+            
             <!-- jhipster-needle-liquibase-add-column - Jhipster will add columns here, do not remove-->
         </createTable>
         
