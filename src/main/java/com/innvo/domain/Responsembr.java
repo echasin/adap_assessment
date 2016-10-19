@@ -1,6 +1,5 @@
 package com.innvo.domain;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.springframework.data.elasticsearch.annotations.Document;
@@ -9,28 +8,22 @@ import javax.persistence.*;
 import javax.validation.constraints.*;
 import java.io.Serializable;
 import java.time.ZonedDateTime;
-import java.util.HashSet;
-import java.util.Set;
 import java.util.Objects;
 
 /**
- * A Response.
+ * A Responsembr.
  */
 @Entity
-@Table(name = "response")
+@Table(name = "responsembr")
 @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
-@Document(indexName = "response")
-public class Response implements Serializable {
+@Document(indexName = "responsembr")
+public class Responsembr implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
-
-    @NotNull
-    @Column(name = "details", nullable = false)
-    private String details;
 
     @NotNull
     @Size(max = 25)
@@ -52,12 +45,12 @@ public class Response implements Serializable {
     private String domain;
 
     @ManyToOne
-    private Questionnaire questionnaire;
+    @NotNull
+    private Asset asset;
 
-    @OneToMany(mappedBy = "response")
-    @JsonIgnore
-    @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
-    private Set<Responsembr> responsembrs = new HashSet<>();
+    @ManyToOne
+    @NotNull
+    private Response response;
 
     public Long getId() {
         return id;
@@ -67,16 +60,13 @@ public class Response implements Serializable {
         this.id = id;
     }
 
-    public String getDetails() {
-        return details;
-    }
-
-    public void setDetails(String details) {
-        this.details = details;
-    }
-
     public String getStatus() {
         return status;
+    }
+
+    public Responsembr status(String status) {
+        this.status = status;
+        return this;
     }
 
     public void setStatus(String status) {
@@ -87,12 +77,22 @@ public class Response implements Serializable {
         return lastmodifiedby;
     }
 
+    public Responsembr lastmodifiedby(String lastmodifiedby) {
+        this.lastmodifiedby = lastmodifiedby;
+        return this;
+    }
+
     public void setLastmodifiedby(String lastmodifiedby) {
         this.lastmodifiedby = lastmodifiedby;
     }
 
     public ZonedDateTime getLastmodifieddatetime() {
         return lastmodifieddatetime;
+    }
+
+    public Responsembr lastmodifieddatetime(ZonedDateTime lastmodifieddatetime) {
+        this.lastmodifieddatetime = lastmodifieddatetime;
+        return this;
     }
 
     public void setLastmodifieddatetime(ZonedDateTime lastmodifieddatetime) {
@@ -103,24 +103,39 @@ public class Response implements Serializable {
         return domain;
     }
 
+    public Responsembr domain(String domain) {
+        this.domain = domain;
+        return this;
+    }
+
     public void setDomain(String domain) {
         this.domain = domain;
     }
 
-    public Questionnaire getQuestionnaire() {
-        return questionnaire;
+    public Asset getAsset() {
+        return asset;
     }
 
-    public void setQuestionnaire(Questionnaire questionnaire) {
-        this.questionnaire = questionnaire;
+    public Responsembr asset(Asset asset) {
+        this.asset = asset;
+        return this;
     }
 
-    public Set<Responsembr> getResponsembrs() {
-        return responsembrs;
+    public void setAsset(Asset asset) {
+        this.asset = asset;
     }
 
-    public void setResponsembrs(Set<Responsembr> responsembrs) {
-        this.responsembrs = responsembrs;
+    public Response getResponse() {
+        return response;
+    }
+
+    public Responsembr response(Response response) {
+        this.response = response;
+        return this;
+    }
+
+    public void setResponse(Response response) {
+        this.response = response;
     }
 
     @Override
@@ -131,11 +146,11 @@ public class Response implements Serializable {
         if (o == null || getClass() != o.getClass()) {
             return false;
         }
-        Response response = (Response) o;
-        if(response.id == null || id == null) {
+        Responsembr responsembr = (Responsembr) o;
+        if(responsembr.id == null || id == null) {
             return false;
         }
-        return Objects.equals(id, response.id);
+        return Objects.equals(id, responsembr.id);
     }
 
     @Override
@@ -145,9 +160,8 @@ public class Response implements Serializable {
 
     @Override
     public String toString() {
-        return "Response{" +
+        return "Responsembr{" +
             "id=" + id +
-            ", details='" + details + "'" +
             ", status='" + status + "'" +
             ", lastmodifiedby='" + lastmodifiedby + "'" +
             ", lastmodifieddatetime='" + lastmodifieddatetime + "'" +

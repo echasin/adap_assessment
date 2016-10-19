@@ -1,27 +1,27 @@
 {
+    "fluentMethods": true,
     "relationships": [
         {
-            "relationshipName": "questionnaire",
-            "otherEntityName": "questionnaire",
+            "relationshipName": "asset",
+            "otherEntityName": "asset",
             "relationshipType": "many-to-one",
-            "otherEntityField": "title"
+            "relationshipValidateRules": [
+                "required"
+            ],
+            "otherEntityField": "name"
         },
         {
-            "relationshipName": "responsembr",
-            "otherEntityName": "responsembr",
-            "relationshipType": "one-to-many",
-            "otherEntityRelationshipName": "response"
+            "relationshipName": "response",
+            "otherEntityName": "response",
+            "relationshipType": "many-to-one",
+            "relationshipValidateRules": [
+                "required"
+            ],
+            "otherEntityField": "name"
         }
     ],
     "fields": [
-        {
-            "fieldName": "details",
-            "fieldType": "String",
-            "fieldValidateRules": [
-                "required"
-            ]
-        },
-        {
+		{
             "fieldName": "status",
             "fieldType": "String",
             "fieldValidateRules": [
@@ -54,12 +54,11 @@
                 "maxlength"
             ],
             "fieldValidateRulesMaxlength": "25"
-        }
-    ],
-    "changelogDate": "20160717205834",
+        }],
+    "changelogDate": "20161019022622",
     "dto": "no",
     "service": "no",
-    "entityTableName": "response",
+    "entityTableName": "responsembr",
     "pagination": "pagination",
     "microserviceName": "adap_assessment",
     "searchEngine": "elasticsearch"

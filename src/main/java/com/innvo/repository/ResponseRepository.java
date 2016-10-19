@@ -20,13 +20,12 @@ public interface ResponseRepository extends JpaRepository<Response,Long> {
 	@Query("SELECT MAX(u.lastmodifieddatetime) FROM Response u WHERE u.questionnaire.id=:id)")
 	ZonedDateTime findMaxLastmodifieddatetimeByQuestionnaireId(@Param("id")long id); 
 	
-	Response findByusernameAndLastmodifieddatetimeAndQuestionnaireId(String username,ZonedDateTime lastmodifieddatetime,long id);
+	//Response findByusernameAndLastmodifieddatetimeAndQuestionnaireId(String username,ZonedDateTime lastmodifieddatetime,long id);
 
 	Response findByLastmodifieddatetimeAndQuestionnaireId(ZonedDateTime lastmodifieddatetime,long id);
 
-	List<Response> findByUsernameAndQuestionnaireId(String username,long id);
+	//List<Response> findByUsernameAndQuestionnaireId(String username,long id);
 	
 	Response findByQuestionnaireId(long id);
 
 }
-

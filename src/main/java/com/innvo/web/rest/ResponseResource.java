@@ -213,9 +213,9 @@ public class ResponseResource {
         response.setQuestionnaire(questionnaire);
         response.setDetails(details);
         response.setDomain("DEMO");
-        response.setLastmodifiedby("echasin");
+        response.setLastmodifiedby(login);
         response.setStatus("Active");
-        response.setUsername(login);
+        //response.setUsername(login);
         Date date=new Date();
         ZonedDateTime lastmodifieddatetime = ZonedDateTime.ofInstant(date.toInstant(),
                 ZoneId.systemDefault());
@@ -245,7 +245,7 @@ public class ResponseResource {
            response.setDomain("DEMO");
            response.setLastmodifiedby("echasin");
            response.setStatus("Active");
-           response.setUsername(login);
+           //response.setUsername(login);
            Date date=new Date();
            ZonedDateTime lastmodifieddatetime = ZonedDateTime.ofInstant(date.toInstant(),
                    ZoneId.systemDefault());
