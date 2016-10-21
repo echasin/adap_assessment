@@ -2,7 +2,6 @@ package com.innvo.web.rest;
 
 import com.codahale.metrics.annotation.Timed;
 import com.innvo.domain.Responsembr;
-
 import com.innvo.repository.ResponsembrRepository;
 import com.innvo.repository.search.ResponsembrSearchRepository;
 import com.innvo.web.rest.util.HeaderUtil;
@@ -39,10 +38,10 @@ public class ResponsembrResource {
         
     @Inject
     private ResponsembrRepository responsembrRepository;
-
+    
     @Inject
     private ResponsembrSearchRepository responsembrSearchRepository;
-
+    
     /**
      * POST  /responsembrs : Create a new responsembr.
      *
@@ -105,7 +104,7 @@ public class ResponsembrResource {
     public ResponseEntity<List<Responsembr>> getAllResponsembrs(Pageable pageable)
         throws URISyntaxException {
         log.debug("REST request to get a page of Responsembrs");
-        Page<Responsembr> page = responsembrRepository.findAll(pageable);
+        Page<Responsembr> page = responsembrRepository.findAll(pageable); 
         HttpHeaders headers = PaginationUtil.generatePaginationHttpHeaders(page, "/api/responsembrs");
         return new ResponseEntity<>(page.getContent(), headers, HttpStatus.OK);
     }
@@ -151,10 +150,8 @@ public class ResponsembrResource {
      * SEARCH  /_search/responsembrs?query=:query : search for the responsembr corresponding
      * to the query.
      *
-     * @param query the query of the responsembr search 
-     * @param pageable the pagination information
+     * @param query the query of the responsembr search
      * @return the result of the search
-     * @throws URISyntaxException if there is an error to generate the pagination HTTP headers
      */
     @RequestMapping(value = "/_search/responsembrs",
         method = RequestMethod.GET,

@@ -2,8 +2,6 @@ package com.innvo.web.rest;
 
 import com.innvo.AdapAssessmentApp;
 import com.innvo.domain.Responsembr;
-import com.innvo.domain.Asset;
-import com.innvo.domain.Response;
 import com.innvo.repository.ResponsembrRepository;
 import com.innvo.repository.search.ResponsembrSearchRepository;
 
@@ -12,11 +10,13 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import static org.hamcrest.Matchers.hasItem;
 import org.mockito.MockitoAnnotations;
-import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.IntegrationTest;
+import org.springframework.boot.test.SpringApplicationConfiguration;
 import org.springframework.http.MediaType;
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
 import org.springframework.data.web.PageableHandlerMethodArgumentResolver;
-import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.springframework.test.context.web.WebAppConfiguration;
 import org.springframework.test.util.ReflectionTestUtils;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
@@ -24,7 +24,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.PostConstruct;
 import javax.inject.Inject;
-import javax.persistence.EntityManager;
 import java.time.Instant;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
@@ -35,15 +34,20 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
+
 /**
  * Test class for the ResponsembrResource REST controller.
  *
  * @see ResponsembrResource
  */
-@RunWith(SpringRunner.class)
-@SpringBootTest(classes = AdapAssessmentApp.class)
+@RunWith(SpringJUnit4ClassRunner.class)
+@SpringApplicationConfiguration(classes = AdapAssessmentApp.class)
+@WebAppConfiguration
+@IntegrationTest
 public class ResponsembrResourceIntTest {
+
     private static final DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'").withZone(ZoneId.of("Z"));
+
     private static final String DEFAULT_STATUS = "AAAAAAAAAAAAAAAAAAAAAAAAA";
     private static final String UPDATED_STATUS = "BBBBBBBBBBBBBBBBBBBBBBBBB";
     private static final String DEFAULT_LASTMODIFIEDBY = "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA";
@@ -67,9 +71,6 @@ public class ResponsembrResourceIntTest {
     @Inject
     private PageableHandlerMethodArgumentResolver pageableArgumentResolver;
 
-    @Inject
-    private EntityManager em;
-
     private MockMvc restResponsembrMockMvc;
 
     private Responsembr responsembr;
@@ -85,36 +86,14 @@ public class ResponsembrResourceIntTest {
             .setMessageConverters(jacksonMessageConverter).build();
     }
 
-    /**
-     * Create an entity for this test.
-     *
-     * This is a static method, as tests for other entities might also need it,
-     * if they test an entity which requires the current entity.
-     */
-    public static Responsembr createEntity(EntityManager em) {
-        Responsembr responsembr = new Responsembr();
-        responsembr = new Responsembr()
-                .status(DEFAULT_STATUS)
-                .lastmodifiedby(DEFAULT_LASTMODIFIEDBY)
-                .lastmodifieddatetime(DEFAULT_LASTMODIFIEDDATETIME)
-                .domain(DEFAULT_DOMAIN);
-        // Add required entity
-        Asset asset = AssetResourceIntTest.createEntity(em);
-        em.persist(asset);
-        em.flush();
-        responsembr.setAsset(asset);
-        // Add required entity
-        Response response = ResponseResourceIntTest.createEntity(em);
-        em.persist(response);
-        em.flush();
-        responsembr.setResponse(response);
-        return responsembr;
-    }
-
     @Before
     public void initTest() {
         responsembrSearchRepository.deleteAll();
-        responsembr = createEntity(em);
+        responsembr = new Responsembr();
+        responsembr.setStatus(DEFAULT_STATUS);
+        responsembr.setLastmodifiedby(DEFAULT_LASTMODIFIEDBY);
+        responsembr.setLastmodifieddatetime(DEFAULT_LASTMODIFIEDDATETIME);
+        responsembr.setDomain(DEFAULT_DOMAIN);
     }
 
     @Test
@@ -224,7 +203,7 @@ public class ResponsembrResourceIntTest {
         // Get all the responsembrs
         restResponsembrMockMvc.perform(get("/api/responsembrs?sort=id,desc"))
                 .andExpect(status().isOk())
-                .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE))
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$.[*].id").value(hasItem(responsembr.getId().intValue())))
                 .andExpect(jsonPath("$.[*].status").value(hasItem(DEFAULT_STATUS.toString())))
                 .andExpect(jsonPath("$.[*].lastmodifiedby").value(hasItem(DEFAULT_LASTMODIFIEDBY.toString())))
@@ -241,7 +220,7 @@ public class ResponsembrResourceIntTest {
         // Get the responsembr
         restResponsembrMockMvc.perform(get("/api/responsembrs/{id}", responsembr.getId()))
             .andExpect(status().isOk())
-            .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE))
+            .andExpect(content().contentType(MediaType.APPLICATION_JSON))
             .andExpect(jsonPath("$.id").value(responsembr.getId().intValue()))
             .andExpect(jsonPath("$.status").value(DEFAULT_STATUS.toString()))
             .andExpect(jsonPath("$.lastmodifiedby").value(DEFAULT_LASTMODIFIEDBY.toString()))
@@ -266,12 +245,12 @@ public class ResponsembrResourceIntTest {
         int databaseSizeBeforeUpdate = responsembrRepository.findAll().size();
 
         // Update the responsembr
-        Responsembr updatedResponsembr = responsembrRepository.findOne(responsembr.getId());
-        updatedResponsembr
-                .status(UPDATED_STATUS)
-                .lastmodifiedby(UPDATED_LASTMODIFIEDBY)
-                .lastmodifieddatetime(UPDATED_LASTMODIFIEDDATETIME)
-                .domain(UPDATED_DOMAIN);
+        Responsembr updatedResponsembr = new Responsembr();
+        updatedResponsembr.setId(responsembr.getId());
+        updatedResponsembr.setStatus(UPDATED_STATUS);
+        updatedResponsembr.setLastmodifiedby(UPDATED_LASTMODIFIEDBY);
+        updatedResponsembr.setLastmodifieddatetime(UPDATED_LASTMODIFIEDDATETIME);
+        updatedResponsembr.setDomain(UPDATED_DOMAIN);
 
         restResponsembrMockMvc.perform(put("/api/responsembrs")
                 .contentType(TestUtil.APPLICATION_JSON_UTF8)
@@ -324,7 +303,7 @@ public class ResponsembrResourceIntTest {
         // Search the responsembr
         restResponsembrMockMvc.perform(get("/api/_search/responsembrs?query=id:" + responsembr.getId()))
             .andExpect(status().isOk())
-            .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE))
+            .andExpect(content().contentType(MediaType.APPLICATION_JSON))
             .andExpect(jsonPath("$.[*].id").value(hasItem(responsembr.getId().intValue())))
             .andExpect(jsonPath("$.[*].status").value(hasItem(DEFAULT_STATUS.toString())))
             .andExpect(jsonPath("$.[*].lastmodifiedby").value(hasItem(DEFAULT_LASTMODIFIEDBY.toString())))

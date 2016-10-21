@@ -37,12 +37,12 @@
                 <constraints nullable="false" />
             </column>
             
-            <column name="asset_id" type="bigint">
+            <column name="response_id" type="bigint">
                 <constraints nullable="false" />
             </column>
 
-            <column name="response_id" type="bigint">
-                <constraints nullable="false" />
+            <column name="asset_id" type="bigint">
+                <constraints nullable="true" />
             </column>
 
             <!-- jhipster-needle-liquibase-add-column - Jhipster will add columns here, do not remove-->

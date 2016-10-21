@@ -4,12 +4,15 @@ import com.codahale.metrics.annotation.Timed;
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.innvo.domain.Asset;
 import com.innvo.domain.Questionnaire;
 import com.innvo.domain.Response;
 import com.innvo.domain.Responsedetail;
+import com.innvo.domain.Responsembr;
 import com.innvo.repository.QuestionnaireRepository;
 import com.innvo.repository.ResponseRepository;
 import com.innvo.repository.ResponsedetailRepository;
+import com.innvo.repository.ResponsembrRepository;
 import com.innvo.repository.search.ResponseSearchRepository;
 import com.innvo.security.SpringSecurityAuditorAware;
 import com.innvo.web.rest.dto.Question;
@@ -66,6 +69,9 @@ public class ResponseResource {
    
     @Inject
     SpringSecurityAuditorAware springSecurityAuditorAware; 
+    
+    @Inject
+    ResponsembrRepository responsembrRepository;
     
     
     /**
@@ -253,4 +259,40 @@ public class ResponseResource {
            responseRepository.save(response);
        }
 
+    
+    @RequestMapping(value = "/saveResponseAndResponsembr",
+            method = RequestMethod.POST,
+            produces = MediaType.APPLICATION_JSON_VALUE)
+        @Timed
+        public void saveResponseAndResponsembr(@Valid @RequestBody Response response) throws URISyntaxException {
+    	    log.debug("REST request to save Response : {}", response);
+            Asset asset=new Asset();
+            Responsembr responsembr=new Responsembr();
+            responsembr.setResponse(response);
+            responsembr.setDomain(response.getDomain());
+            responsembr.setLastmodifiedby(response.getLastmodifiedby());
+            responsembr.setStatus(response.getStatus());
+            responsembr.setLastmodifieddatetime(response.getLastmodifieddatetime());
+           // responsembr.setAsset(asset);
+            Response savedResponse = responseRepository.save(response);
+            Responsembr savedResponsembr=responsembrRepository.save(responsembr);
+        }
+    
+    @RequestMapping(value = "/updateResponseAndResponsembr",
+            method = RequestMethod.POST,
+            produces = MediaType.APPLICATION_JSON_VALUE)
+        @Timed
+        public void updateResponseAndResponsembr(@Valid @RequestBody Response response) throws URISyntaxException {
+            log.debug("REST request to save Response : {}", response);
+            Asset asset=new Asset();
+            Responsembr responsembr=new Responsembr();
+            responsembr.setResponse(response);
+            responsembr.setDomain(response.getDomain());
+            responsembr.setLastmodifiedby(response.getLastmodifiedby());
+            responsembr.setStatus(response.getStatus());
+            responsembr.setAsset(asset);
+            Response savedResponse = responseRepository.save(response);
+            Responsembr savedResponsembr=responsembrRepository.save(responsembr);
+            
+        }
 }

@@ -1,15 +1,5 @@
 {
-    "fluentMethods": true,
     "relationships": [
-        {
-            "relationshipName": "asset",
-            "otherEntityName": "asset",
-            "relationshipType": "many-to-one",
-            "relationshipValidateRules": [
-                "required"
-            ],
-            "otherEntityField": "name"
-        },
         {
             "relationshipName": "response",
             "otherEntityName": "response",
@@ -18,10 +8,16 @@
                 "required"
             ],
             "otherEntityField": "name"
+        },
+        {
+            "relationshipName": "asset",
+            "otherEntityName": "asset",
+            "relationshipType": "many-to-one",
+            "otherEntityField": "id"
         }
     ],
     "fields": [
-		{
+        {
             "fieldName": "status",
             "fieldType": "String",
             "fieldValidateRules": [
@@ -54,7 +50,8 @@
                 "maxlength"
             ],
             "fieldValidateRulesMaxlength": "25"
-        }],
+        }
+    ],
     "changelogDate": "20161019022622",
     "dto": "no",
     "service": "no",

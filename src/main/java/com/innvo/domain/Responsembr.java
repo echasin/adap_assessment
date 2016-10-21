@@ -46,11 +46,10 @@ public class Responsembr implements Serializable {
 
     @ManyToOne
     @NotNull
-    private Asset asset;
+    private Response response;
 
     @ManyToOne
-    @NotNull
-    private Response response;
+    private Asset asset;
 
     public Long getId() {
         return id;
@@ -64,22 +63,12 @@ public class Responsembr implements Serializable {
         return status;
     }
 
-    public Responsembr status(String status) {
-        this.status = status;
-        return this;
-    }
-
     public void setStatus(String status) {
         this.status = status;
     }
 
     public String getLastmodifiedby() {
         return lastmodifiedby;
-    }
-
-    public Responsembr lastmodifiedby(String lastmodifiedby) {
-        this.lastmodifiedby = lastmodifiedby;
-        return this;
     }
 
     public void setLastmodifiedby(String lastmodifiedby) {
@@ -90,11 +79,6 @@ public class Responsembr implements Serializable {
         return lastmodifieddatetime;
     }
 
-    public Responsembr lastmodifieddatetime(ZonedDateTime lastmodifieddatetime) {
-        this.lastmodifieddatetime = lastmodifieddatetime;
-        return this;
-    }
-
     public void setLastmodifieddatetime(ZonedDateTime lastmodifieddatetime) {
         this.lastmodifieddatetime = lastmodifieddatetime;
     }
@@ -103,39 +87,24 @@ public class Responsembr implements Serializable {
         return domain;
     }
 
-    public Responsembr domain(String domain) {
-        this.domain = domain;
-        return this;
-    }
-
     public void setDomain(String domain) {
         this.domain = domain;
-    }
-
-    public Asset getAsset() {
-        return asset;
-    }
-
-    public Responsembr asset(Asset asset) {
-        this.asset = asset;
-        return this;
-    }
-
-    public void setAsset(Asset asset) {
-        this.asset = asset;
     }
 
     public Response getResponse() {
         return response;
     }
 
-    public Responsembr response(Response response) {
-        this.response = response;
-        return this;
-    }
-
     public void setResponse(Response response) {
         this.response = response;
+    }
+
+    public Asset getAsset() {
+        return asset;
+    }
+
+    public void setAsset(Asset asset) {
+        this.asset = asset;
     }
 
     @Override

@@ -7,7 +7,7 @@
         Added the constraints for entity Responsembr.
     -->
     <changeSet id="20161019022622-2" author="jhipster">
-        
+        <!--  
         <addForeignKeyConstraint baseColumnNames="asset_id"
                                  baseTableName="responsembr"
                                  constraintName="fk_responsembr_asset_id"
@@ -19,6 +19,6 @@
                                  constraintName="fk_responsembr_response_id"
                                  referencedColumnNames="id"
                                  referencedTableName="response"/>
-
+-->
     </changeSet>
 </databaseChangeLog>
