@@ -14,17 +14,13 @@
     <property name="floatType" value="float" dbms="mysql, oracle"/>
 
     <!--
-        Added the entity Response.
+        Added the entity Responsembr.
     -->
-    <changeSet id="20160717205834-1" author="jhipster">
-        <createTable tableName="response">
+    <changeSet id="20161019022622-1" author="jhipster">
+        <createTable tableName="responsembr">
             <column name="id" type="bigint" autoIncrement="${autoIncrement}">
                 <constraints primaryKey="true" nullable="false"/>
             </column>
-            <column name="details" type="varchar(255)">
-                <constraints nullable="false" />
-            </column>
-            
             <column name="status" type="varchar(25)">
                 <constraints nullable="false" />
             </column>
@@ -41,13 +37,17 @@
                 <constraints nullable="false" />
             </column>
             
-            <column name="questionnaire_id" type="bigint">
+            <column name="response_id" type="bigint">
+                <constraints nullable="false" />
+            </column>
+
+            <column name="asset_id" type="bigint">
                 <constraints nullable="true" />
             </column>
 
             <!-- jhipster-needle-liquibase-add-column - Jhipster will add columns here, do not remove-->
         </createTable>
-        <dropDefaultValue tableName="response" columnName="lastmodifieddatetime" columnDataType="datetime"/>
+        <dropDefaultValue tableName="responsembr" columnName="lastmodifieddatetime" columnDataType="datetime"/>
         
     </changeSet>
 </databaseChangeLog>

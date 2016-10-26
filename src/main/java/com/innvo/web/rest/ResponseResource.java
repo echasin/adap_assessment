@@ -4,12 +4,15 @@ import com.codahale.metrics.annotation.Timed;
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.innvo.domain.Asset;
 import com.innvo.domain.Questionnaire;
 import com.innvo.domain.Response;
 import com.innvo.domain.Responsedetail;
+import com.innvo.domain.Responsembr;
 import com.innvo.repository.QuestionnaireRepository;
 import com.innvo.repository.ResponseRepository;
 import com.innvo.repository.ResponsedetailRepository;
+import com.innvo.repository.ResponsembrRepository;
 import com.innvo.repository.search.ResponseSearchRepository;
 import com.innvo.security.SpringSecurityAuditorAware;
 import com.innvo.web.rest.dto.Question;
@@ -66,6 +69,12 @@ public class ResponseResource {
    
     @Inject
     SpringSecurityAuditorAware springSecurityAuditorAware; 
+    
+    @Inject
+    ResponsembrRepository responsembrRepository;
+    
+    @Inject
+    ResponsedetailRepository responsedetailRepository;
     
     
     /**
@@ -199,13 +208,16 @@ public class ResponseResource {
      * GET  /save response
      *
      * @param id the id of the questionnaire
+     * @throws IOException 
+     * @throws JsonMappingException 
+     * @throws JsonParseException 
      */
     @RequestMapping(value = "/saveResponse/{id}/{details}",
         method = RequestMethod.GET,
         produces = MediaType.APPLICATION_JSON_VALUE)
     @Timed
     public void saveResponse(@PathVariable("id") Long id,
-    		                 @PathVariable("details") String details) {
+    		                 @PathVariable("details") String details) throws JsonParseException, JsonMappingException, IOException {
         log.debug("REST request to save Response : {}", id);
         String login=springSecurityAuditorAware.getCurrentAuditor();
         Response response = new Response();
@@ -213,14 +225,36 @@ public class ResponseResource {
         response.setQuestionnaire(questionnaire);
         response.setDetails(details);
         response.setDomain("DEMO");
-        response.setLastmodifiedby("echasin");
+        response.setLastmodifiedby(login);
         response.setStatus("Active");
-        response.setUsername(login);
+        //response.setUsername(login);
         Date date=new Date();
         ZonedDateTime lastmodifieddatetime = ZonedDateTime.ofInstant(date.toInstant(),
                 ZoneId.systemDefault());
         response.setLastmodifieddatetime(lastmodifieddatetime);
-        responseRepository.save(response);
+        Response saveResponse=responseRepository.save(response);
+        
+        ObjectMapper mapper = new ObjectMapper();
+        
+        ResponsedetailJson responsedetailJson = mapper.readValue(saveResponse.getDetails(), ResponsedetailJson.class);
+
+        for(Questiongroup questiongroup:responsedetailJson.questiongroups){
+        System.out.println(questiongroup.getQuestiongroup());
+        for(Question question:questiongroup.getQuestions()){
+        	Responsedetail responsedetail=new Responsedetail();
+        	System.out.println(question.getQuestion());
+        	System.out.println(question.getSubquestion());
+        	System.out.println(question.getResponse());
+        	responsedetail.setQuestiongroupId(Long.parseLong(questiongroup.getQuestiongroup()));
+        	responsedetail.setQuestionId(Long.parseLong(question.getQuestion()));
+        	if(question.getSubquestion()!=null){
+        	responsedetail.setSubquestionId(Long.parseLong(question.getSubquestion()));
+        	}
+        	responsedetail.setResponseId(id);
+        	responsedetail.setResponse(question.getResponse());
+        	responsedetailRepository.save(responsedetail);
+         }	
+       }
     }
     
     
@@ -228,6 +262,9 @@ public class ResponseResource {
      * GET  /save response
      *
      * @param id the id of the questionnaire
+     * @throws IOException 
+     * @throws JsonMappingException 
+     * @throws JsonParseException 
      */
     @RequestMapping(value = "/updateResponse/{id}/{rId}/{details}",
         method = RequestMethod.GET,
@@ -235,7 +272,7 @@ public class ResponseResource {
     @Timed
     public void updateResponse(@PathVariable("id") Long id,
     		                   @PathVariable("rId") Long rId,
-    		                   @PathVariable("details") String details) {
+    		                   @PathVariable("details") String details) throws JsonParseException, JsonMappingException, IOException {
     	   log.debug("REST request to save Response : {}", id);
            String login=springSecurityAuditorAware.getCurrentAuditor();
            Response response = responseRepository.findOne(rId);
@@ -245,12 +282,79 @@ public class ResponseResource {
            response.setDomain("DEMO");
            response.setLastmodifiedby("echasin");
            response.setStatus("Active");
-           response.setUsername(login);
+           //response.setUsername(login);
            Date date=new Date();
            ZonedDateTime lastmodifieddatetime = ZonedDateTime.ofInstant(date.toInstant(),
                    ZoneId.systemDefault());
            response.setLastmodifieddatetime(lastmodifieddatetime);
-           responseRepository.save(response);
+           Response saveResponse=responseRepository.save(response);
+           
+           ObjectMapper mapper = new ObjectMapper();
+           
+           ResponsedetailJson responsedetailJson = mapper.readValue(saveResponse.getDetails(), ResponsedetailJson.class);
+
+           for(Questiongroup questiongroup:responsedetailJson.questiongroups){
+           System.out.println(questiongroup.getQuestiongroup());
+           for(Question question:questiongroup.getQuestions()){
+           	Responsedetail responsedetail=new Responsedetail();
+           	System.out.println(question.getQuestion());
+           	System.out.println(question.getSubquestion());
+           	System.out.println(question.getResponse());
+           	responsedetail.setQuestiongroupId(Long.parseLong(questiongroup.getQuestiongroup()));
+           	responsedetail.setQuestionId(Long.parseLong(question.getQuestion()));
+           	if(question.getSubquestion()!=null){
+           	responsedetail.setSubquestionId(Long.parseLong(question.getSubquestion()));
+           	}
+           	responsedetail.setResponseId(id);
+           	responsedetail.setResponse(question.getResponse());
+           	responsedetailRepository.save(responsedetail);
+            }	
+          }
        }
 
+    /**
+     * 
+     * @param response
+     * @throws URISyntaxException
+     */
+    @RequestMapping(value = "/saveResponseAndResponsembr",
+            method = RequestMethod.POST,
+            produces = MediaType.APPLICATION_JSON_VALUE)
+        @Timed
+        public void saveResponseAndResponsembr(@Valid @RequestBody Response response) throws URISyntaxException {
+    	    log.debug("REST request to save Response : {}", response);
+            Asset asset=new Asset();
+            Responsembr responsembr=new Responsembr();
+            responsembr.setResponse(response);
+            responsembr.setDomain(response.getDomain());
+            responsembr.setLastmodifiedby(response.getLastmodifiedby());
+            responsembr.setStatus(response.getStatus());
+            responsembr.setLastmodifieddatetime(response.getLastmodifieddatetime());
+           // responsembr.setAsset(asset);
+            Response savedResponse = responseRepository.save(response);
+            Responsembr savedResponsembr=responsembrRepository.save(responsembr);
+        }
+    
+    /**
+     * 
+     * @param response
+     * @throws URISyntaxException
+     */
+    @RequestMapping(value = "/updateResponseAndResponsembr",
+            method = RequestMethod.POST,
+            produces = MediaType.APPLICATION_JSON_VALUE)
+        @Timed
+        public void updateResponseAndResponsembr(@Valid @RequestBody Response response) throws URISyntaxException {
+            log.debug("REST request to save Response : {}", response);
+            Asset asset=new Asset();
+            Responsembr responsembr=new Responsembr();
+            responsembr.setResponse(response);
+            responsembr.setDomain(response.getDomain());
+            responsembr.setLastmodifiedby(response.getLastmodifiedby());
+            responsembr.setStatus(response.getStatus());
+            responsembr.setAsset(asset);
+            Response savedResponse = responseRepository.save(response);
+            Responsembr savedResponsembr=responsembrRepository.save(responsembr);
+            
+        }
 }

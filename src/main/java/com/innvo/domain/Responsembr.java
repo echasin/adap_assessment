@@ -1,6 +1,5 @@
 package com.innvo.domain;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.springframework.data.elasticsearch.annotations.Document;
@@ -9,28 +8,22 @@ import javax.persistence.*;
 import javax.validation.constraints.*;
 import java.io.Serializable;
 import java.time.ZonedDateTime;
-import java.util.HashSet;
-import java.util.Set;
 import java.util.Objects;
 
 /**
- * A Response.
+ * A Responsembr.
  */
 @Entity
-@Table(name = "response")
+@Table(name = "responsembr")
 @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
-@Document(indexName = "response")
-public class Response implements Serializable {
+@Document(indexName = "responsembr")
+public class Responsembr implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
-
-    @NotNull
-    @Column(name = "details", nullable = false)
-    private String details;
 
     @NotNull
     @Size(max = 25)
@@ -52,12 +45,11 @@ public class Response implements Serializable {
     private String domain;
 
     @ManyToOne
-    private Questionnaire questionnaire;
+    @NotNull
+    private Response response;
 
-    @OneToMany(mappedBy = "response")
-    @JsonIgnore
-    @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
-    private Set<Responsembr> responsembrs = new HashSet<>();
+    @ManyToOne
+    private Asset asset;
 
     public Long getId() {
         return id;
@@ -65,14 +57,6 @@ public class Response implements Serializable {
 
     public void setId(Long id) {
         this.id = id;
-    }
-
-    public String getDetails() {
-        return details;
-    }
-
-    public void setDetails(String details) {
-        this.details = details;
     }
 
     public String getStatus() {
@@ -107,20 +91,20 @@ public class Response implements Serializable {
         this.domain = domain;
     }
 
-    public Questionnaire getQuestionnaire() {
-        return questionnaire;
+    public Response getResponse() {
+        return response;
     }
 
-    public void setQuestionnaire(Questionnaire questionnaire) {
-        this.questionnaire = questionnaire;
+    public void setResponse(Response response) {
+        this.response = response;
     }
 
-    public Set<Responsembr> getResponsembrs() {
-        return responsembrs;
+    public Asset getAsset() {
+        return asset;
     }
 
-    public void setResponsembrs(Set<Responsembr> responsembrs) {
-        this.responsembrs = responsembrs;
+    public void setAsset(Asset asset) {
+        this.asset = asset;
     }
 
     @Override
@@ -131,11 +115,11 @@ public class Response implements Serializable {
         if (o == null || getClass() != o.getClass()) {
             return false;
         }
-        Response response = (Response) o;
-        if(response.id == null || id == null) {
+        Responsembr responsembr = (Responsembr) o;
+        if(responsembr.id == null || id == null) {
             return false;
         }
-        return Objects.equals(id, response.id);
+        return Objects.equals(id, responsembr.id);
     }
 
     @Override
@@ -145,9 +129,8 @@ public class Response implements Serializable {
 
     @Override
     public String toString() {
-        return "Response{" +
+        return "Responsembr{" +
             "id=" + id +
-            ", details='" + details + "'" +
             ", status='" + status + "'" +
             ", lastmodifiedby='" + lastmodifiedby + "'" +
             ", lastmodifieddatetime='" + lastmodifieddatetime + "'" +
