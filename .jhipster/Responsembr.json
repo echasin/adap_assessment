@@ -8,12 +8,6 @@
                 "required"
             ],
             "otherEntityField": "name"
-        },
-        {
-            "relationshipName": "asset",
-            "otherEntityName": "asset",
-            "relationshipType": "many-to-one",
-            "otherEntityField": "id"
         }
     ],
     "fields": [
@@ -50,6 +44,10 @@
                 "maxlength"
             ],
             "fieldValidateRulesMaxlength": "25"
+        },
+        {
+            "fieldName": "assetId",
+            "fieldType": "Long"
         }
     ],
     "changelogDate": "20161019022622",

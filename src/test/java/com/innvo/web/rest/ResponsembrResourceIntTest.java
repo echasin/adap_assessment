@@ -59,6 +59,9 @@ public class ResponsembrResourceIntTest {
     private static final String DEFAULT_DOMAIN = "AAAAAAAAAAAAAAAAAAAAAAAAA";
     private static final String UPDATED_DOMAIN = "BBBBBBBBBBBBBBBBBBBBBBBBB";
 
+    private static final Long DEFAULT_ASSET_ID = 1L;
+    private static final Long UPDATED_ASSET_ID = 2L;
+
     @Inject
     private ResponsembrRepository responsembrRepository;
 
@@ -94,6 +97,7 @@ public class ResponsembrResourceIntTest {
         responsembr.setLastmodifiedby(DEFAULT_LASTMODIFIEDBY);
         responsembr.setLastmodifieddatetime(DEFAULT_LASTMODIFIEDDATETIME);
         responsembr.setDomain(DEFAULT_DOMAIN);
+        responsembr.setAssetId(DEFAULT_ASSET_ID);
     }
 
     @Test
@@ -116,6 +120,7 @@ public class ResponsembrResourceIntTest {
         assertThat(testResponsembr.getLastmodifiedby()).isEqualTo(DEFAULT_LASTMODIFIEDBY);
         assertThat(testResponsembr.getLastmodifieddatetime()).isEqualTo(DEFAULT_LASTMODIFIEDDATETIME);
         assertThat(testResponsembr.getDomain()).isEqualTo(DEFAULT_DOMAIN);
+        assertThat(testResponsembr.getAssetId()).isEqualTo(DEFAULT_ASSET_ID);
 
         // Validate the Responsembr in ElasticSearch
         Responsembr responsembrEs = responsembrSearchRepository.findOne(testResponsembr.getId());
@@ -208,7 +213,8 @@ public class ResponsembrResourceIntTest {
                 .andExpect(jsonPath("$.[*].status").value(hasItem(DEFAULT_STATUS.toString())))
                 .andExpect(jsonPath("$.[*].lastmodifiedby").value(hasItem(DEFAULT_LASTMODIFIEDBY.toString())))
                 .andExpect(jsonPath("$.[*].lastmodifieddatetime").value(hasItem(DEFAULT_LASTMODIFIEDDATETIME_STR)))
-                .andExpect(jsonPath("$.[*].domain").value(hasItem(DEFAULT_DOMAIN.toString())));
+                .andExpect(jsonPath("$.[*].domain").value(hasItem(DEFAULT_DOMAIN.toString())))
+                .andExpect(jsonPath("$.[*].assetId").value(hasItem(DEFAULT_ASSET_ID.intValue())));
     }
 
     @Test
@@ -225,7 +231,8 @@ public class ResponsembrResourceIntTest {
             .andExpect(jsonPath("$.status").value(DEFAULT_STATUS.toString()))
             .andExpect(jsonPath("$.lastmodifiedby").value(DEFAULT_LASTMODIFIEDBY.toString()))
             .andExpect(jsonPath("$.lastmodifieddatetime").value(DEFAULT_LASTMODIFIEDDATETIME_STR))
-            .andExpect(jsonPath("$.domain").value(DEFAULT_DOMAIN.toString()));
+            .andExpect(jsonPath("$.domain").value(DEFAULT_DOMAIN.toString()))
+            .andExpect(jsonPath("$.assetId").value(DEFAULT_ASSET_ID.intValue()));
     }
 
     @Test
@@ -251,6 +258,7 @@ public class ResponsembrResourceIntTest {
         updatedResponsembr.setLastmodifiedby(UPDATED_LASTMODIFIEDBY);
         updatedResponsembr.setLastmodifieddatetime(UPDATED_LASTMODIFIEDDATETIME);
         updatedResponsembr.setDomain(UPDATED_DOMAIN);
+        updatedResponsembr.setAssetId(UPDATED_ASSET_ID);
 
         restResponsembrMockMvc.perform(put("/api/responsembrs")
                 .contentType(TestUtil.APPLICATION_JSON_UTF8)
@@ -265,6 +273,7 @@ public class ResponsembrResourceIntTest {
         assertThat(testResponsembr.getLastmodifiedby()).isEqualTo(UPDATED_LASTMODIFIEDBY);
         assertThat(testResponsembr.getLastmodifieddatetime()).isEqualTo(UPDATED_LASTMODIFIEDDATETIME);
         assertThat(testResponsembr.getDomain()).isEqualTo(UPDATED_DOMAIN);
+        assertThat(testResponsembr.getAssetId()).isEqualTo(UPDATED_ASSET_ID);
 
         // Validate the Responsembr in ElasticSearch
         Responsembr responsembrEs = responsembrSearchRepository.findOne(testResponsembr.getId());
@@ -308,6 +317,7 @@ public class ResponsembrResourceIntTest {
             .andExpect(jsonPath("$.[*].status").value(hasItem(DEFAULT_STATUS.toString())))
             .andExpect(jsonPath("$.[*].lastmodifiedby").value(hasItem(DEFAULT_LASTMODIFIEDBY.toString())))
             .andExpect(jsonPath("$.[*].lastmodifieddatetime").value(hasItem(DEFAULT_LASTMODIFIEDDATETIME_STR)))
-            .andExpect(jsonPath("$.[*].domain").value(hasItem(DEFAULT_DOMAIN.toString())));
+            .andExpect(jsonPath("$.[*].domain").value(hasItem(DEFAULT_DOMAIN.toString())))
+            .andExpect(jsonPath("$.[*].assetId").value(hasItem(DEFAULT_ASSET_ID.intValue())));
     }
 }
