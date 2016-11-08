@@ -32,9 +32,8 @@ public class Response implements Serializable {
     @Column(name = "details", nullable = false)
     private String details;
 
-    @NotNull
     @Size(max = 25)
-    @Column(name = "status", length = 25, nullable = false)
+    @Column(name = "status", length = 25)
     private String status;
 
     @NotNull
@@ -42,8 +41,7 @@ public class Response implements Serializable {
     @Column(name = "lastmodifiedby", length = 50, nullable = false)
     private String lastmodifiedby;
 
-    @NotNull
-    @Column(name = "lastmodifieddatetime", nullable = false)
+    @Column(name = "lastmodifieddatetime")
     private ZonedDateTime lastmodifieddatetime;
 
     @NotNull
