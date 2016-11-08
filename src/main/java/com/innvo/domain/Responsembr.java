@@ -44,12 +44,12 @@ public class Responsembr implements Serializable {
     @Column(name = "domain", length = 25, nullable = false)
     private String domain;
 
+    @Column(name = "asset_id")
+    private Long assetId;
+
     @ManyToOne
     @NotNull
     private Response response;
-
-    @ManyToOne
-    private Asset asset;
 
     public Long getId() {
         return id;
@@ -91,20 +91,20 @@ public class Responsembr implements Serializable {
         this.domain = domain;
     }
 
+    public Long getAssetId() {
+        return assetId;
+    }
+
+    public void setAssetId(Long assetId) {
+        this.assetId = assetId;
+    }
+
     public Response getResponse() {
         return response;
     }
 
     public void setResponse(Response response) {
         this.response = response;
-    }
-
-    public Asset getAsset() {
-        return asset;
-    }
-
-    public void setAsset(Asset asset) {
-        this.asset = asset;
     }
 
     @Override
@@ -135,6 +135,7 @@ public class Responsembr implements Serializable {
             ", lastmodifiedby='" + lastmodifiedby + "'" +
             ", lastmodifieddatetime='" + lastmodifieddatetime + "'" +
             ", domain='" + domain + "'" +
+            ", assetId='" + assetId + "'" +
             '}';
     }
 }

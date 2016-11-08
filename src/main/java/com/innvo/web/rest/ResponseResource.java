@@ -4,7 +4,6 @@ import com.codahale.metrics.annotation.Timed;
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.innvo.domain.Asset;
 import com.innvo.domain.Questionnaire;
 import com.innvo.domain.Response;
 import com.innvo.domain.Responsedetail;
@@ -42,6 +41,7 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -317,44 +317,64 @@ public class ResponseResource {
      * @param response
      * @throws URISyntaxException
      */
-    @RequestMapping(value = "/saveResponseAndResponsembr",
+    @RequestMapping(value = "/saveResponseAndResponsembr/{id}",
             method = RequestMethod.POST,
             produces = MediaType.APPLICATION_JSON_VALUE)
         @Timed
-        public void saveResponseAndResponsembr(@Valid @RequestBody Response response) throws URISyntaxException {
+        public void saveResponseAndResponsembr(@Valid @RequestBody Response response,@PathVariable("id") Long id) throws URISyntaxException {
     	    log.debug("REST request to save Response : {}", response);
-            Asset asset=new Asset();
             Responsembr responsembr=new Responsembr();
             responsembr.setResponse(response);
             responsembr.setDomain(response.getDomain());
             responsembr.setLastmodifiedby(response.getLastmodifiedby());
             responsembr.setStatus(response.getStatus());
             responsembr.setLastmodifieddatetime(response.getLastmodifieddatetime());
-           // responsembr.setAsset(asset);
+            responsembr.setAssetId(id);
             Response savedResponse = responseRepository.save(response);
             Responsembr savedResponsembr=responsembrRepository.save(responsembr);
         }
+ 
     
     /**
      * 
      * @param response
      * @throws URISyntaxException
      */
-    @RequestMapping(value = "/updateResponseAndResponsembr",
+    @RequestMapping(value = "/updateResponseAndResponsembr/{id}",
             method = RequestMethod.POST,
             produces = MediaType.APPLICATION_JSON_VALUE)
         @Timed
-        public void updateResponseAndResponsembr(@Valid @RequestBody Response response) throws URISyntaxException {
+        public void updateResponseAndResponsembr(@Valid @RequestBody Response response,@PathVariable("id") Long id) throws URISyntaxException {
             log.debug("REST request to save Response : {}", response);
-            Asset asset=new Asset();
             Responsembr responsembr=new Responsembr();
             responsembr.setResponse(response);
             responsembr.setDomain(response.getDomain());
             responsembr.setLastmodifiedby(response.getLastmodifiedby());
             responsembr.setStatus(response.getStatus());
-            responsembr.setAsset(asset);
+            responsembr.setAssetId(id);
             Response savedResponse = responseRepository.save(response);
             Responsembr savedResponsembr=responsembrRepository.save(responsembr);
             
+        }
+    
+    /**
+     * 
+     * @param id
+     * @return
+     * @throws IOException
+     */
+    @RequestMapping(value = "/responseByAsset/{id}",
+            method = RequestMethod.GET,
+            produces = MediaType.APPLICATION_JSON_VALUE)
+        @Timed
+        public ResponseEntity<List<Response>> getResponseByAsset(@PathVariable Long id) throws  IOException {
+            log.debug("REST request to get Response : {}", id);
+            List<Response> responses=new ArrayList<Response>();
+            List<Responsembr> responsembrs = responsembrRepository.findByAssetId(id);
+            for(Responsembr responsembr:responsembrs){
+                Response response = responseRepository.findOne(responsembr.getResponse().getId());
+                responses.add(response);
+            }
+            return new ResponseEntity<>(responses, HttpStatus.OK);
         }
 }

@@ -1,5 +1,6 @@
 package com.innvo.repository;
 
+import com.innvo.domain.Response;
 import com.innvo.domain.Responsembr;
 
 import org.springframework.data.jpa.repository.*;
@@ -12,4 +13,5 @@ import java.util.List;
 @SuppressWarnings("unused")
 public interface ResponsembrRepository extends JpaRepository<Responsembr,Long> {
 
+	List<Responsembr> findByAssetId(long id);
 }
