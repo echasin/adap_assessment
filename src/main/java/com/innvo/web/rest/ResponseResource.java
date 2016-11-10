@@ -324,16 +324,21 @@ public class ResponseResource {
         public void saveResponseAndResponsembr(@Valid @RequestBody Response response,@PathVariable("id") Long id) throws URISyntaxException {
     	    log.debug("REST request to save Response : {}", response);
             Responsembr responsembr=new Responsembr();
+            Date date=new Date();
+            ZonedDateTime zonedDateTime = ZonedDateTime.ofInstant(date.toInstant(),
+                    ZoneId.systemDefault());
+            response.setLastmodifieddatetime(zonedDateTime);
             responsembr.setResponse(response);
             responsembr.setDomain(response.getDomain());
             responsembr.setLastmodifiedby(response.getLastmodifiedby());
             responsembr.setStatus(response.getStatus());
-            responsembr.setLastmodifieddatetime(response.getLastmodifieddatetime());
+            responsembr.setLastmodifieddatetime(zonedDateTime);
             responsembr.setAssetId(id);
             Response savedResponse = responseRepository.save(response);
             Responsembr savedResponsembr=responsembrRepository.save(responsembr);
         }
  
+    
     
     /**
      * 
