@@ -27,6 +27,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -367,19 +368,25 @@ public class ResponseResource {
      * @param id
      * @return
      * @throws IOException
+     * @throws URISyntaxException 
      */
     @RequestMapping(value = "/responseByAsset/{id}",
             method = RequestMethod.GET,
             produces = MediaType.APPLICATION_JSON_VALUE)
         @Timed
-        public ResponseEntity<List<Response>> getResponseByAsset(@PathVariable Long id) throws  IOException {
+       // public ResponseEntity<List<Response>> getResponseByAsset(@PathVariable Long id) throws  IOException {
+    	public ResponseEntity<List<Response>> getResponseByAsset(@PathVariable Long id,Pageable pageable) throws  IOException, URISyntaxException {
             log.debug("REST request to get Response : {}", id);
             List<Response> responses=new ArrayList<Response>();
             List<Responsembr> responsembrs = responsembrRepository.findByAssetId(id);
             for(Responsembr responsembr:responsembrs){
                 Response response = responseRepository.findOne(responsembr.getResponse().getId());
                 responses.add(response);
-            }
-            return new ResponseEntity<>(responses, HttpStatus.OK);
+         //   }
+         //   return new ResponseEntity<>(responses, HttpStatus.OK);
+            } 
+            Page<Response> usersPage = new PageImpl<Response>(responses,pageable, responses.size()); 
+            HttpHeaders headers = PaginationUtil.generatePaginationHttpHeaders(usersPage, "/api/responses");
+            return new ResponseEntity<>(responses,headers,HttpStatus.OK);
         }
 }
