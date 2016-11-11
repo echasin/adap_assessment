@@ -1,0 +1,6 @@
+id,action,operator,response,displayedquestion_id,question_id,questionnaire_id,subquestion_id
+10000,display question,=,A1,10010,null,10000,10000
+10001,display question,=,A1,10010,null,10000,10001
+10002,display question,=,A1,10010,null,10000,10002
+10003,display question,=,A1,10010,null,10000,10003
+10004,display question,=,A1,10010,null,10000,10004

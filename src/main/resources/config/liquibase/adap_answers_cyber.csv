@@ -1,0 +1,4 @@
+id,code,answeroption,position,status,lastmodifiedby,lastmodifieddatetime,domain,question_id
+10000,A1,High,1,Active,echasin,2016-07-17 00:00:00,CYBER,10000
+10001,A2,Medium,2,Active,echasin,2016-07-17 00:00:00,CYBER,10000
+10002,A3,Low,3,Active,echasin,2016-07-17 00:00:00,CYBER,10000
