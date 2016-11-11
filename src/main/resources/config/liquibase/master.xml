@@ -28,7 +28,9 @@
     <include file="classpath:config/liquibase/changelog/20161004120041_added_entity_constraints_Logicoperator.xml" relativeToChangelogFile="false"/>
     <include file="classpath:config/liquibase/changelog/20161019022622_added_entity_constraints_Responsembr.xml" relativeToChangelogFile="false"/>
     <!-- jhipster-needle-liquibase-add-constraints-changelog - JHipster will add liquibase constraints changelogs here -->
-	<include file="classpath:config/liquibase/changelog/load_adap_all.xml" relativeToChangelogFile="false"/>
+	<include file="classpath:config/liquibase/changelog/load_adap_test.xml" relativeToChangelogFile="false"/>
+	<include file="classpath:config/liquibase/changelog/load_adap_pprm.xml" relativeToChangelogFile="false"/>
+	<include file="classpath:config/liquibase/changelog/load_adap_cyber.xml" relativeToChangelogFile="false"/>
    
 
 </databaseChangeLog>

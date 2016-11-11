@@ -31,7 +31,7 @@
                 <constraints unique="true" nullable="true" />
             </column>
             <column name="questionnaire_id" type="bigint">
-                <constraints nullable="true" />
+                <constraints nullable="false" />
             </column>
 
             <column name="firstsubquestion_id" type="bigint">

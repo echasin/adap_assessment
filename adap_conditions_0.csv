@@ -1,0 +1,7 @@
+id, action, operator, response, displayedquestion_id, question_id,questionnaire_id,subquestion_id
+1000,"display question",">","3",1002,1001,1000,null
+1001,"display question",">","2",1006,1003,1000,null
+1002,"display question","=","A1",1006,null,1000,1003
+1003,"display question","=","A2",1006,null,1000,1004
+1004,"display question","=","2",3004,3001,3000,null
+1005,"display question","=",A1,3004,null,3000,3001

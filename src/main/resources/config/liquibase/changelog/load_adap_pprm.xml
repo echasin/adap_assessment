@@ -20,9 +20,10 @@
     <changeSet id="01" author="jhipster">
                
         <loadData encoding="UTF-8"
-                  file="config/liquibase/adap_questionnaires_0.csv"
+                  file="config/liquibase/adap_questionnaires_pprm.csv"
                   separator=","
                   tableName="questionnaire"/>
+		<!-- 
 		<loadData encoding="UTF-8"
                   file="config/liquibase/adap_questiongroups_0.csv"
                   separator=","
@@ -55,6 +56,6 @@
                   file="config/liquibase/adap_logicoperator_1.csv"
                   separator=","
                   tableName="logicoperator"/>                     		  
-         
+         -->
     </changeSet>
 </databaseChangeLog>
