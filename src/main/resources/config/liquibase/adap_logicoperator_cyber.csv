@@ -1,6 +1,6 @@
 id,operator,firstquestion_id,secondquestion_id,firstsubquestion_id,secondsubquestion_id,questionnaire_id
 10000,OR,10000,null,null,10000,10000
-10001,OR,10000,null,1003,10000,10001
-10002,OR,10000,null,null,10000,10002
-10003,OR,10000,null,null,10000,10003
-10004,OR,10000,null,null,10000,10004
+10001,OR,10000,null,null,10001,10000
+10002,OR,10000,null,null,10002,10000
+10003,OR,10000,null,null,10003,10000
+10004,OR,10000,null,null,10004,10000

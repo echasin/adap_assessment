@@ -49,23 +49,14 @@
                   file="config/liquibase/adap_logicoperator_cyber.csv"
                   separator=","
                   tableName="logicoperator"/>          
-		<!-- 
 		<loadData encoding="UTF-8"
-                  file="config/liquibase/adap_responses_0.csv"
+                  file="config/liquibase/adap_responses_cyber.csv"
                   separator=","
                   tableName="response"/> 
         <loadData encoding="UTF-8"
-                  file="config/liquibase/adap_responsembrs_0.csv"
+                  file="config/liquibase/adap_responsembrs_cyber.csv"
                   separator=","
                   tableName="responsembr"/>
-        <loadData encoding="UTF-8"
-                  file="config/liquibase/adap_conditions_0.csv"
-                  separator=","
-                  tableName="conditions"/> 
-        <loadData encoding="UTF-8"
-                  file="config/liquibase/adap_logicoperator_1.csv"
-                  separator=","
-                  tableName="logicoperator"/>                     		  
-         -->
+
     </changeSet>
 </databaseChangeLog>
