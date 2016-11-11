@@ -32,10 +32,9 @@
 		<loadData encoding="UTF-8"
                   file="config/liquibase/adap_questions_cyber.csv"
                   separator=","
-                  tableName="question"/>
-                 
+                  tableName="question"/>         
 		<loadData encoding="UTF-8"
-                  file="config/liquibase/adap_answers_0.csv"
+                  file="config/liquibase/adap_answers_cyber.csv"
                   separator=","
                   tableName="answer"/> 	
 		<loadData encoding="UTF-8"
