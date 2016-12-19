@@ -29,10 +29,10 @@ spring:
         livereload:
             enabled: false # we use gulp + BrowserSync for livereload
     datasource:
-        url: jdbc:postgresql://localhost:5432/adap_elasticsearch_review
+        url: jdbc:postgresql://localhost:5432/adap_ms
         name:
-        username: postgres
-        password: adminadmin
+        username: root
+        password: root
     jpa:
         database-platform: com.innvo.domain.util.FixedPostgreSQL82Dialect
         database: POSTGRESQL
