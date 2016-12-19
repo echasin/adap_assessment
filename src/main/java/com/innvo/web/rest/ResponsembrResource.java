@@ -1,7 +1,9 @@
 package com.innvo.web.rest;
 
 import com.codahale.metrics.annotation.Timed;
+import com.innvo.domain.Responsedetail;
 import com.innvo.domain.Responsembr;
+import com.innvo.repository.ResponsedetailRepository;
 import com.innvo.repository.ResponsembrRepository;
 import com.innvo.repository.search.ResponsembrSearchRepository;
 import com.innvo.web.rest.util.HeaderUtil;
@@ -20,10 +22,9 @@ import javax.inject.Inject;
 import javax.validation.Valid;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
-import java.util.stream.StreamSupport;
 
 import static org.elasticsearch.index.query.QueryBuilders.*;
 
@@ -41,6 +42,9 @@ public class ResponsembrResource {
     
     @Inject
     private ResponsembrSearchRepository responsembrSearchRepository;
+    
+    @Inject
+    private ResponsedetailRepository responseDetailRepository;
     
     /**
      * POST  /responsembrs : Create a new responsembr.
@@ -165,5 +169,23 @@ public class ResponsembrResource {
         return new ResponseEntity<>(page.getContent(), headers, HttpStatus.OK);
     }
 
+    @RequestMapping(value = "/responsembrsobject/{assetId}",
+            method = RequestMethod.GET,
+            produces = MediaType.APPLICATION_JSON_VALUE)
+        @Timed
+	public ResponseEntity<List<List<Responsedetail>>> getResponsembrAssetId(@PathVariable Long assetId,
+			Pageable pageable) throws URISyntaxException {
+		log.debug("REST request to get Responsembr : {}", assetId);
+		List<Responsembr> responsembr = responsembrRepository.findByAssetId(assetId);
+		List<List<Responsedetail>> responseDetailValue = new ArrayList<List<Responsedetail>>();
+		List<Responsedetail> list = null;
+		for (Responsembr responsembrValue : responsembr) {
+			list = responseDetailRepository.findByResponseId(responsembrValue.getResponse().getId());
+			responseDetailValue.add(list);
+		}
+		log.debug("Getting responsedetails based on responseid :" + responseDetailValue);
+		return Optional.ofNullable(responseDetailValue).map(result -> new ResponseEntity<>(result, HttpStatus.OK))
+				.orElse(new ResponseEntity<>(HttpStatus.NOT_FOUND));
+	}
 
 }
