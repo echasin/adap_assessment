@@ -47,6 +47,10 @@
                   file="config/liquibase/adap_responsembrs_0.csv"
                   separator=","
                   tableName="responsembr"/>
+          <loadData encoding="UTF-8"
+                  file="config/liquibase/adap_responsedetails_0.csv"
+                  separator=","
+                  tableName="responsedetail"/>          
         <loadData encoding="UTF-8"
                   file="config/liquibase/adap_conditions_0.csv"
                   separator=","
